@@ -1,0 +1,19 @@
+ // ORIGINAL LINUX CODE
+       // glMultTransposeMatrixf(markers[626].data());
+       // Windows Code: ?
+        glMultMatrixf(&markers[626][0]);
+
+
+
+
+/*
+ Returns true if float x is infinite
+  */
+bool MyMarkerTracker::isinf(double x) {
+
+    if(x <= DBL_MAX && x>= DBL_MIN) {
+        return false;
+    } else {
+        return true;
+    }
+}
