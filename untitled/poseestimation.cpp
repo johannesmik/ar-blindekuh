@@ -5,7 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
-#include "PoseEstimation.h"
+#include "poseestimation.h"
 
 using namespace std;
 
@@ -593,7 +593,7 @@ void estimateSquarePose( float* mat, const CvPoint2D32f* p2D, float markerSize )
 // Returns Matrix in Row-major format
 void calcHomography( float* pResult, const CvPoint2D32f* pQuad )
     {
-    // homography computation แ la Harker & O'Leary, simplified for squares
+    // homography computation รก la Harker & O'Leary, simplified for squares
 
     // subtract mean from points
     CvPoint2D32f c[ 4 ];
