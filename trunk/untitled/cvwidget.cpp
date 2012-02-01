@@ -8,7 +8,7 @@ CVWidget::CVWidget(QWidget *parent):QWidget(parent)
     if ( !capture ) {
 
         QMessageBox::information(this, "Webcam", "Es wurde keine Webcam gefunden", "Ok");
-
+        exit(0);
     }
 
 
