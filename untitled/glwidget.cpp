@@ -257,7 +257,7 @@ void GLWidget::calculate_frequency() {
     // C = 261.63 Hz, Cis 277.18, D 293.88, Es 311.13,
     // E 329.63, F 349.23, Fis 370, G 392
     // As 415.3, A 440, B 466.16, H 493.88
-    frequency = 261.63 * pow(2.0, (halbton/12));
+    frequency = 261.63 * pow(2.0f, (halbton/12));
     qDebug("frequenz ist %f", frequency);
 
 

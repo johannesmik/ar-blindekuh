@@ -38,8 +38,18 @@ void MyMarkerTracker::queryForMarker()
 //        cv::cvtColor(adaptivethreshold, test, CV_GRAY2BGR);
 //        emit(frameUpdate(test));
 
-    cv::findContours(adaptivethreshold, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
-    if(contours.size() == 0){
+    CvMemStorage* memStorage = cvCreateMemStorage();
+    CvSeq* contours;
+    IplImage adaptiveIPL = adaptivethreshold;
+    cvFindContours(
+        &adaptiveIPL, memStorage, &contours, sizeof(CvContour),
+        CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE
+    );
+    return;
+
+    contours->total;
+    //cv::findContours(adaptivethreshold, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+    if(contours->total; == 0){
         qDebug() << "invalid frame"; // when the camera is no yet initialized, we get a timeout, so just wait for next frame
         return;
     }
@@ -47,11 +57,15 @@ void MyMarkerTracker::queryForMarker()
     // this data structure is send via a signal to the opengl threads
     std::vector<QPair<std::vector<float>, int> > result;
 
+
+
+
+
     //iterate over all found contours
     for(int idx = 0; idx >= 0; idx = hierarchy[idx][0] )
     {
         std::vector<cv::Point> approxResult;
-        cv::approxPolyDP(contours[idx], approxResult, 7.68789, true);
+        //cv::approxPolyDP(contours[idx], approxResult, 7.68789, true);
 
         cv::Rect bound = boundingRect(approxResult);
         if(approxResult.size() != 4 || bound.area() < 30 || bound.height > frame.size().height - 10 || bound.width > frame.size().width - 10){
@@ -126,7 +140,7 @@ void MyMarkerTracker::queryForMarker()
                 y2 = (maxIndex >= halfStripeLength*2-2) ? 0 : sobelValues[maxIndex+1];
 
                 double pos = (y2 - y0) / (4*y1 - 2*y0 - 2*y2 );
-                if (std::isinf(pos)) {
+                if (isinf(pos)) {
                         // value of pos is infinity, just don't consider this point for further calculations
                         continue;
                 }
@@ -190,7 +204,7 @@ void MyMarkerTracker::queryForMarker()
         // we map to the center of our pixels, therefore *.5
         cv::Point2f resultCoords[] = {cv::Point2f(-0.5, -0.5), cv::Point2f(5.5, -0.5), cv::Point2f(5.5, 5.5), cv::Point2f(-0.5, 5.5)};
 
-        cv::Mat transformationMatrix = cv::getPerspectiveTransform(exactCornerPoints.data(), resultCoords);
+        cv::Mat transformationMatrix = cv::getPerspectiveTransform(&exactCornerPoints[0], resultCoords);
 
         // create marker buffer
         cv::Mat marker(6, 6, frame.type());
@@ -209,9 +223,9 @@ void MyMarkerTracker::queryForMarker()
         }
 
         // highlight detected markers in image
-        cv::Point *points = approxResult.data();
+        cv::Point *points = &approxResult[0];
         int size = approxResult.size();
-        cv::polylines(frame, (const cv::Point**)&points, &size, 1, true,  CV_RGB(0,255,0), 2);
+        //cv::polylines(frame, (const cv::Point**)&points, &size, 1, true,  CV_RGB(0,255,0), 2);
 
         // calculate id for each position, the overhead is not so much
         ushort idPos[4] = {0,0,0,0};
@@ -249,7 +263,7 @@ void MyMarkerTracker::queryForMarker()
         }
 
         //rotate corners and transform coordinates
-        estimateSquarePose(transformationMatrixOpenGL.data(), shiftedCornerPoints, 0.045);
+        estimateSquarePose(&transformationMatrixOpenGL[0], shiftedCornerPoints, 0.045);
         qDebug() << QDateTime::currentMSecsSinceEpoch() << "detected marker: " << id;
         result.push_back(QPair<std::vector<float>, int>(transformationMatrixOpenGL, id));
 
@@ -300,3 +314,17 @@ bool MyMarkerTracker::isMarker(const cv::Mat &marker)
 
     return realMarker;
 }
+
+
+/*
+ Returns true if float x is infinite
+  */
+bool MyMarkerTracker::isinf(double x) {
+
+    if(x <= DBL_MAX && x>= DBL_MIN) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
