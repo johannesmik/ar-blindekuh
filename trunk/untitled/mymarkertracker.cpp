@@ -165,13 +165,13 @@ void MyMarkerTracker::queryForMarker()
         // l = (d_y*(a_x - b_x)+d_x*(b_y-a_y))/(d_x*c_y - c_x*d_y)
         for(int I = 0; I<4; I++){
             //draw line
-//                    Point pt1, pt2;
+//                    cv::Point pt1, pt2;
 //                    pt1.x = fittedLines[I][2] - 300 * fittedLines[I][0];
 //                    pt1.y = fittedLines[I][3] - 300 * fittedLines[I][1];
 //                    pt2.x = pt1.x + 500 * fittedLines[I][0];
 //                    pt2.y = pt1.y + 500 * fittedLines[I][1];
 
-//                    line(frame, pt1, pt2, red, 1);
+//                    line(frame, pt1, pt2, CV_RGB(255,0,0), 1);
             const double c_x = fittedLines[I][0];
             const double c_y = fittedLines[I][1];
             const double a_x = fittedLines[I][2];
@@ -207,6 +207,11 @@ void MyMarkerTracker::queryForMarker()
         if(!isMarker(marker)){
             continue;
         }
+
+        // highlight detected markers in image
+        cv::Point *points = approxResult.data();
+        int size = approxResult.size();
+        cv::polylines(frame, (const cv::Point**)&points, &size, 1, true,  CV_RGB(0,255,0), 2);
 
         // calculate id for each position, the overhead is not so much
         ushort idPos[4] = {0,0,0,0};
@@ -245,7 +250,7 @@ void MyMarkerTracker::queryForMarker()
 
         //rotate corners and transform coordinates
         estimateSquarePose(transformationMatrixOpenGL.data(), shiftedCornerPoints, 0.045);
-        qDebug() << "detected marker" << QDateTime::currentMSecsSinceEpoch();
+        qDebug() << QDateTime::currentMSecsSinceEpoch() << "detected marker: " << id;
         result.push_back(QPair<std::vector<float>, int>(transformationMatrixOpenGL, id));
 
     } // end of iteration over contours
