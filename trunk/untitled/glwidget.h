@@ -28,6 +28,7 @@ public slots:
 
 private:
     void paintSpeaker(float speakerPos[], const char *name);
+    void paintMarker(float markerPos[], const char *name, bool active);
 
     QTimer *gametimer;
     QTimer *soundtimer;
