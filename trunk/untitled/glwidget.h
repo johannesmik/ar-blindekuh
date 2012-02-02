@@ -1,7 +1,7 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
-#include "AL\alut.h"
+#include <AL/alut.h>
 
 #define NUM_BUFFERS 1
 #define NUM_SOURCES 1
@@ -27,10 +27,11 @@ public slots:
     void sound_mainloop();
 
 private:
+    void paintSpeaker(float speakerPos[], const char *name);
 
     QTimer *gametimer;
     QTimer *soundtimer;
-    void print_text(GLfloat x, GLfloat y, GLfloat z, char* text);
+    void print_text(GLfloat x, GLfloat y, GLfloat z, const char* text);
     void calculate_frequency();
     void calculate_rate();
 

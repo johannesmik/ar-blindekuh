@@ -26,7 +26,7 @@ win32 {
     LIBS += -L"C:\Program Files\OpenAL 1.1 SDK\libs\Win32"
     LIBS += -lOpenAL32 -lalut
 } else {
-    LIBS += -lglut -lopencv_core -lopencv_highgui -lGLU
+    LIBS += -lglut -lopencv_core -lopencv_highgui -lGLU -lalut
 }
 
 

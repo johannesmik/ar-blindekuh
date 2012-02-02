@@ -189,7 +189,7 @@ void GLWidget::resizeGL(int width, int height)
     glRotatef(30.0,11.0,1.0,0.0) ;
 }
 
-void GLWidget::print_text(GLfloat x, GLfloat y, GLfloat z, char* text) {
+void GLWidget::print_text(GLfloat x, GLfloat y, GLfloat z, const char* text) {
 
     int len, i;
     len = (int) strlen(text);
