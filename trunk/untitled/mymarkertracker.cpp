@@ -159,7 +159,7 @@ void MyMarkerTracker::queryForMarker()
                 y2 = (maxIndex >= halfStripeLength*2-2) ? 0 : sobelValues[maxIndex+1];
 
                 double pos = (y2 - y0) / (4*y1 - 2*y0 - 2*y2 );
-                if (isinf(pos)) {
+                if (pos != pos) {
                         // value of pos is infinity, just don't consider this point for further calculations
                         continue;
                 }
@@ -238,13 +238,13 @@ void MyMarkerTracker::queryForMarker()
 
         cv::Point *points = &approxResult[0];
         int size = approxResult.size();
-        cv::polylines(frame, (const cv::Point**)&points, &size, 1, true,  CV_RGB(0,0,255), 2);
+        cv::polylines(rgbFrame, (const cv::Point**)&points, &size, 1, true,  CV_RGB(0,0,255), 2);
 
         if(!isMarker(marker)){
             continue;
         }
 
-        cv::polylines(frame, (const cv::Point**)&points, &size, 1, true,  CV_RGB(0,255,0), 2);
+        cv::polylines(rgbFrame, (const cv::Point**)&points, &size, 1, true,  CV_RGB(0,255,0), 2);
 
         // calculate id for each position, the overhead is not so much
         ushort idPos[4] = {0,0,0,0};
