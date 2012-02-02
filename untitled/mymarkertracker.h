@@ -22,6 +22,7 @@ public slots:
 private:
     int subpixSampleSafe ( const IplImage* pSrc, CvPoint2D32f p );
     bool isMarker(const cv::Mat &marker);
+    bool isinf(double x);
 
     cv::VideoCapture cap;
     cv::Mat bw;
@@ -30,6 +31,7 @@ private:
 
     std::vector<cv::Vec4i> hierarchy;
     cv::Mat frame;
+    cv::Mat rgbFrame;
 
     CvMemStorage *memStorage;
 

@@ -38,7 +38,9 @@ void MyMarkerTracker::queryForMarker()
         qDebug() << "disconntected or end of file!";
         return;
     }
-    emit(frameUpdate(frame));
+
+    cv::cvtColor(frame, rgbFrame,  CV_BGR2RGB);
+    emit(frameUpdate(rgbFrame));
 
     cv::cvtColor(frame, bw, CV_BGR2GRAY);
     IplImage bw_ipl(bw);
@@ -69,6 +71,7 @@ void MyMarkerTracker::queryForMarker()
 
     // this data structure is send via a signal to the opengl threads
     std::vector<QPair<std::vector<float>, int> > result;
+
 
     //iterate over all found contours
     //for(int idx = 0; idx < contours.size(); idx++)
@@ -156,7 +159,7 @@ void MyMarkerTracker::queryForMarker()
                 y2 = (maxIndex >= halfStripeLength*2-2) ? 0 : sobelValues[maxIndex+1];
 
                 double pos = (y2 - y0) / (4*y1 - 2*y0 - 2*y2 );
-                if (std::isinf(pos)) {
+                if (isinf(pos)) {
                         // value of pos is infinity, just don't consider this point for further calculations
                         continue;
                 }
@@ -179,7 +182,6 @@ void MyMarkerTracker::queryForMarker()
 
             delete sobelValues;
         } // end iterate over corners of quadrilateral
-
         std::vector<cv::Point2f> exactCornerPoints;
 
         // iterate over all lines to calculate exact corner points
@@ -220,7 +222,7 @@ void MyMarkerTracker::queryForMarker()
         // we map to the center of our pixels, therefore *.5
         cv::Point2f resultCoords[] = {cv::Point2f(-0.5, -0.5), cv::Point2f(5.5, -0.5), cv::Point2f(5.5, 5.5), cv::Point2f(-0.5, 5.5)};
 
-        cv::Mat transformationMatrix = cv::getPerspectiveTransform(exactCornerPoints.data(), resultCoords);
+        cv::Mat transformationMatrix = cv::getPerspectiveTransform(&exactCornerPoints[0], resultCoords);
 
         // create marker buffer
         cv::Mat marker(6, 6, frame.type());
@@ -280,13 +282,25 @@ void MyMarkerTracker::queryForMarker()
         }
 
         //rotate corners and transform coordinates
-        estimateSquarePose(transformationMatrixOpenGL.data(), shiftedCornerPoints, 0.045);
+        estimateSquarePose(&transformationMatrixOpenGL[0], shiftedCornerPoints, 0.045);
         qDebug() << QDateTime::currentMSecsSinceEpoch() << "detected marker: " << id;
         result.push_back(QPair<std::vector<float>, int>(transformationMatrixOpenGL, id));
 
     } // end of iteration over contours
     emit(markerPositionUpdate(result));
     cvClearMemStorage(memStorage);
+}
+
+/*
+ Returns true if float x is infinite
+  */
+bool MyMarkerTracker::isinf(double x) {
+
+    if(x <= DBL_MAX && x>= DBL_MIN) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 
