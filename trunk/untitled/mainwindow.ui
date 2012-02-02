@@ -50,7 +50,7 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="CVWidget" name="widget" native="true">
+         <widget class="CVWidget" name="cvwidget" native="true">
           <property name="maximumSize">
            <size>
             <width>640</width>

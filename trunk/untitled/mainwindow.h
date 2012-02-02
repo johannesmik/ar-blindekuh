@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "mymarkertracker.h"
+#include <QTimer>
 
 namespace Ui {
 class MainWindow;
@@ -17,6 +19,8 @@ public:
     
 private:
     Ui::MainWindow *ui;
+    MyMarkerTracker *tracker;
+    QTimer frameQueryLoop;
 };
 
 #endif // MAINWINDOW_H

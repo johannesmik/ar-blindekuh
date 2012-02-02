@@ -16,31 +16,17 @@ class CVWidget: public QWidget
         Q_OBJECT;
 
   public:
-        CVWidget(QWidget *parent=NULL);
+        CVWidget(QWidget *parent=0);
         ~CVWidget();
 
+
 private:
-      CvMemStorage *storage; // Image storage
-      CvMemStorage *memStorage;
-      CvCapture *capture;
-      _IplImage *cv_image;
-      IplImage *iplConverted;
-      IplImage *iplThreshold;
-
-      bool isFirstStripe;
-      bool isFirstMarker;
-
-      QImage q_image;
-      QTimer *q_timer;
+      QImage frameImage;
 
       void paintEvent(QPaintEvent *e);
-      void resize(int w, int h);
-
-      int subpixSampleSafe(const IplImage *pSrc, CvPoint2D32f p);
-      bool isMarker(const cv::Mat &marker);
 
   public slots:
-      void queryFrame();
+      void frameUpdate(const cv::Mat& frame);
 
 };
 
