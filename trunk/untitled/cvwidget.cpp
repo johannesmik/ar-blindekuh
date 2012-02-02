@@ -21,8 +21,8 @@ void CVWidget::paintEvent(QPaintEvent *e)
     //qDebug("q_image.height(): %i this->height(): %i", q_image.height(), this->height());
     QPainter painter(this);
     //do not scale, as data is copied when scaled
-    //painter.drawImage(0,0, frameImage.scaledToHeight(this->height()) );
-    painter.drawImage(0,0, frameImage);
+    painter.drawImage(0,0, frameImage.scaledToHeight(this->height()) );
+    //painter.drawImage(0,0, frameImage);
 
 }
 
