@@ -42,12 +42,14 @@ SOURCES += main.cpp\
         glwidget.cpp \
         cvwidget.cpp \
     highscorewidget.cpp \
-    poseestimation.cpp
+    poseestimation.cpp \
+    mymarkertracker.cpp
 
 HEADERS  += mainwindow.h \
         glwidget.h \
         cvwidget.h \
     highscorewidget.h \
-    poseestimation.h
+    poseestimation.h \
+    mymarkertracker.h
 
 FORMS    += mainwindow.ui
