@@ -11,6 +11,7 @@ class MyMarkerTracker : public QObject
 public:
     explicit MyMarkerTracker(QObject *parent = 0);
     ~MyMarkerTracker();
+
 signals:
     void markerPositionUpdate(std::vector<QPair<std::vector<float>, int> >);
     void frameUpdate(cv::Mat frame);
@@ -21,15 +22,16 @@ public slots:
 private:
     int subpixSampleSafe ( const IplImage* pSrc, CvPoint2D32f p );
     bool isMarker(const cv::Mat &marker);
-    bool isinf(double x);
 
     cv::VideoCapture cap;
     cv::Mat bw;
     cv::Mat adaptivethreshold;
     cv::Mat test;
 
+    std::vector<cv::Vec4i> hierarchy;
     cv::Mat frame;
-    CvMemStorage* memStorage;
+
+    CvMemStorage *memStorage;
 
 
 };
