@@ -10,7 +10,7 @@ class MyMarkerTracker : public QObject
     Q_OBJECT
 public:
     explicit MyMarkerTracker(QObject *parent = 0);
-
+    ~MyMarkerTracker();
 signals:
     void markerPositionUpdate(std::vector<QPair<std::vector<float>, int> >);
     void frameUpdate(cv::Mat frame);
@@ -28,9 +28,8 @@ private:
     cv::Mat adaptivethreshold;
     cv::Mat test;
 
-    std::vector<std::vector<cv::Point> > contours;
-    std::vector<cv::Vec4i> hierarchy;
     cv::Mat frame;
+    CvMemStorage* memStorage;
 
 
 };

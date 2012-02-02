@@ -3,6 +3,8 @@
 #include <QDateTime>
 #include "mymarkertracker.h"
 #include "poseestimation.h"
+#include "cvwidget.h"
+#include <QMessageBox>
 
 MyMarkerTracker::MyMarkerTracker(QObject *parent):
     QObject(parent),
@@ -20,19 +22,33 @@ MyMarkerTracker::MyMarkerTracker(QObject *parent):
     //use a higher resolution
     cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
     cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
+    memStorage = cvCreateMemStorage();
+
+}
+
+MyMarkerTracker::~MyMarkerTracker()
+{
+    cvReleaseMemStorage(&memStorage);
 }
 
 void MyMarkerTracker::queryForMarker()
 {
+    std::vector<std::vector<cv::Point> > contoursorig;
+    std::vector<std::vector<cv::Point> > contours;
+    std::vector<cv::Vec4i> hierarchy;
+
+
 
     // get a new frame from camera
     if(!cap.read(frame)){
         qDebug() << "disconntected or end of file!";
         return;
     }
+    const cv::Mat origframe(frame);
     emit(frameUpdate(frame));
 
-    cv::cvtColor(frame, bw, CV_BGR2GRAY);
+
+    cv::cvtColor(origframe, bw, CV_BGR2GRAY);
     IplImage bw_ipl(bw);
     cv::threshold(bw, adaptivethreshold, 190.0, 255.0, cv::THRESH_BINARY|cv::THRESH_OTSU);
 //        cv::cvtColor(adaptivethreshold, test, CV_GRAY2BGR);
@@ -40,25 +56,39 @@ void MyMarkerTracker::queryForMarker()
 
 
 
-
-    CvMemStorage* memStorage = cvCreateMemStorage();
+    //use c-bindings, c++ cv::finContours doesn't work on windows
     CvSeq* contoursSeq;
     IplImage adaptiveIPL = adaptivethreshold;
     cvFindContours(
         &adaptiveIPL, memStorage, &contoursSeq, sizeof(CvContour),
         CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE
     );
-
+    // but convert result back to original datastructure
     for (; contoursSeq; contoursSeq = contoursSeq->h_next){
-        std::vector contour;
-        contour.a
-        contours.push_back(contoursSeq->first);
+        std::vector<cv::Point> contourVec;
+        contourVec.resize(contoursSeq->total);
+        cvCvtSeqToArray(contoursSeq, &contourVec[0]);
+        contours.push_back(contourVec);
     }
-    return;
 
-    contours->total;
-    //cv::findContours(adaptivethreshold, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
-    if(contours->total; == 0){
+    cv::findContours(adaptivethreshold, contoursorig, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+    if(contoursorig.size() != contours.size()){
+        std::cout << "fail 1!!!" << std::endl;
+        return;
+    }
+    for(int i = 0; i<contoursorig.size(); i++){
+        if(contoursorig[i].size() != contours[i].size()){
+            std::cout << "fail 2!!!" << std::endl;
+            return;
+        }
+        for(int j = 0; j<contoursorig[i].size(); j++){
+            if(contoursorig[i][j] != contours[i][j]){
+                std::cout << "fail 3!!!" << std::endl;
+                return;
+            }
+        }
+    }
+    if(contours.size() == 0){
         qDebug() << "invalid frame"; // when the camera is no yet initialized, we get a timeout, so just wait for next frame
         return;
     }
@@ -66,22 +96,20 @@ void MyMarkerTracker::queryForMarker()
     // this data structure is send via a signal to the opengl threads
     std::vector<QPair<std::vector<float>, int> > result;
 
-
-
-
-
     //iterate over all found contours
     for(int idx = 0; idx >= 0; idx = hierarchy[idx][0] )
     {
         std::vector<cv::Point> approxResult;
-        cv::approxPolyDP(contours[idx], approxResult, 7.68789, true);
+        cv::approxPolyDP(contoursorig[idx], approxResult, 7.68789, true);
 
         cv::Rect bound = boundingRect(approxResult);
+
         if(approxResult.size() != 4 || bound.area() < 30 || bound.height > frame.size().height - 10 || bound.width > frame.size().width - 10){
             //We need 4 corners, the area has to be large enough, but not too large
             continue;
         }
         int halfStripeLength;
+
 
         std::vector<cv::Vec4f> fittedLines;
         // for all corner points of approximated quadrilateral
@@ -173,6 +201,7 @@ void MyMarkerTracker::queryForMarker()
             delete sobelValues;
         } // end iterate over corners of quadrilateral
 
+
         std::vector<cv::Point2f> exactCornerPoints;
 
         // iterate over all lines to calculate exact corner points
@@ -188,13 +217,13 @@ void MyMarkerTracker::queryForMarker()
         // l = (d_y*(a_x - b_x)+d_x*(b_y-a_y))/(d_x*c_y - c_x*d_y)
         for(int I = 0; I<4; I++){
             //draw line
-//                    cv::Point pt1, pt2;
-//                    pt1.x = fittedLines[I][2] - 300 * fittedLines[I][0];
-//                    pt1.y = fittedLines[I][3] - 300 * fittedLines[I][1];
-//                    pt2.x = pt1.x + 500 * fittedLines[I][0];
-//                    pt2.y = pt1.y + 500 * fittedLines[I][1];
+                    cv::Point pt1, pt2;
+                    pt1.x = fittedLines[I][2] - 300 * fittedLines[I][0];
+                    pt1.y = fittedLines[I][3] - 300 * fittedLines[I][1];
+                    pt2.x = pt1.x + 500 * fittedLines[I][0];
+                    pt2.y = pt1.y + 500 * fittedLines[I][1];
 
-//                    line(frame, pt1, pt2, CV_RGB(255,0,0), 1);
+                    line(frame, pt1, pt2, CV_RGB(255,0,0), 1);
             const double c_x = fittedLines[I][0];
             const double c_y = fittedLines[I][1];
             const double a_x = fittedLines[I][2];
@@ -216,25 +245,35 @@ void MyMarkerTracker::queryForMarker()
         cv::Mat transformationMatrix = cv::getPerspectiveTransform(&exactCornerPoints[0], resultCoords);
 
         // create marker buffer
-        cv::Mat marker(6, 6, frame.type());
+        cv::Mat marker(6, 6, origframe.type());
 
         // and fill it from original frame
-        cv::warpPerspective(frame, marker, transformationMatrix, cv::Size(6,6));
+        cv::warpPerspective(origframe, marker, transformationMatrix, cv::Size(6,6));
 
         //convert to grayscale
-        cvtColor(marker, marker, CV_BGR2GRAY);
+        cv::cvtColor(marker, marker, CV_BGR2GRAY);
+
+        cvNamedWindow ("Marker1", 0 );
+        cvResizeWindow("Marker1", 120, 120 );
+        imshow("Marker1", marker);
 
         // and apply a automat
-        cv::threshold(marker, marker, 127.0, 255.0, cv::THRESH_BINARY);
+        cv::threshold(marker, marker, 127.0, 255.0, cv::THRESH_BINARY|cv::THRESH_OTSU);
+
+
+
+        // highlight detected markers in image
+        cv::Point *points = &approxResult[0];
+        int size = approxResult.size();
+        cv::polylines(frame, (const cv::Point**)&points, &size, 1, true,  CV_RGB(0,0,255), 2);
+
 
         if(!isMarker(marker)){
             continue;
         }
 
         // highlight detected markers in image
-        cv::Point *points = &approxResult[0];
-        int size = approxResult.size();
-        //cv::polylines(frame, (const cv::Point**)&points, &size, 1, true,  CV_RGB(0,255,0), 2);
+        cv::polylines(frame, (const cv::Point**)&points, &size, 1, true,  CV_RGB(0,255,0), 2);
 
         // calculate id for each position, the overhead is not so much
         ushort idPos[4] = {0,0,0,0};
@@ -278,6 +317,7 @@ void MyMarkerTracker::queryForMarker()
 
     } // end of iteration over contours
     emit(markerPositionUpdate(result));
+    cvClearMemStorage(memStorage);
 }
 
 
@@ -304,7 +344,6 @@ int MyMarkerTracker::subpixSampleSafe ( const IplImage* pSrc, CvPoint2D32f p )
 bool MyMarkerTracker::isMarker(const cv::Mat &marker)
 {
     bool realMarker = false;
-
     //there has to be at least one white part inside the marker
     for(int i = 1; i<5 && !realMarker; i++){
         for(int j = 1; j<5 && !realMarker; j++){
@@ -317,9 +356,24 @@ bool MyMarkerTracker::isMarker(const cv::Mat &marker)
     // all the pixels on the edge have to be black
     for(int i = 0; i<6 && realMarker; i++){
         if(marker.at<uchar>(0, i) != 0 || marker.at<uchar>(5, i) != 0 || marker.at<uchar>(i, 0) != 0 || marker.at<uchar>(i, 5) != 0){
+
             realMarker = false;
         }
     }
+    cvNamedWindow ("Marker", 0 );
+    cvResizeWindow("Marker", 120, 120 );
+    imshow("Marker", marker);
+
+    CVWidget *w = new CVWidget();
+    cv::Mat colorBWmarker;
+    cv::cvtColor(marker, colorBWmarker, CV_GRAY2BGR);
+    w->frameUpdate(marker);
+    w->show();
+
+    QMessageBox::information(w, "Webcam", QString("realmarker: "+realMarker), "Ok");
+
+    w->close();
+    w->deleteLater();
 
     return realMarker;
 }
