@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include "mymarkertracker.h"
 #include <QTimer>
+#include <QPair>
+#include <vector>
+#include "soundoutput.h"
 
 namespace Ui {
 class MainWindow;
@@ -16,11 +19,14 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+public slots:
+    void markerUpdate(std::vector<QPair<std::vector<float>,int> > m);
     
 private:
     Ui::MainWindow *ui;
     MyMarkerTracker *tracker;
     QTimer frameQueryLoop;
+    soundoutput sound;
 };
 
 #endif // MAINWINDOW_H

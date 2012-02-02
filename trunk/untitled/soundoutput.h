@@ -5,6 +5,8 @@
 #include <QTimer>
 #include <vector>
 #include <math.h>
+#include <AL/alut.h>
+#include <iostream>
 
 class soundoutput : public QObject
 {
@@ -15,12 +17,16 @@ public:
 public slots:
     void playPause(int msecs);
     void stop();
+    void play();
 
 private:
     float calculateFrequency(float angle);
     float calculateRate(float distance);
     QTimer timer;
-    bool playingState;
+    bool playing;
+    ALuint	bufferNear;
+    ALuint	source;
+
 };
 
 #endif // SOUNDOUTPUT_H
