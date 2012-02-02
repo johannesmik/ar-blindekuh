@@ -1,45 +1,56 @@
 #include "soundoutput.h"
-#include <AL/alut.h>
+#include "scenedescription.h"
 
-//ALfloat listenerPos[]={0.0,0.0,0.0};
-//ALfloat listenerVel[]={0.0,0.0,0.0};
-//ALfloat	listenerOri[]={0.0,0.0,-1.0, 0.0,1.0,0.0};
-
-//float marker0Pos[]={ 2.0, 0.0, 0.0};
-//float marker1Pos[]={ 0.0, 0.0, 2.0};
-//float marker2Pos[]={ -2.0, 0.0, 0.0};
-//float marker3Pos[]={ 0.0, 0.0, -2.0};
-
-//float player0Pos[]={0.0, 0.0, 0.0};
-//float player0Dis = 6.0;
-//float player0Ang = 90.0;
-
-//ALfloat source0Pos[]={ 0.0, 0.0, -2.0};
-//ALfloat source0Vel[]={ 0.0, 0.0, 0.0};
-
-//float speaker0Pos[]={ 2.0, 0.0, 2.0};
-//float speaker1Pos[]={ -2.0, 0.0, 2.0};
-//float speaker2Pos[]={ -2.0, 0.0, -2.0};
-//float speaker3Pos[]={ 2.0, 0.0, -2.0};
 
 soundoutput::soundoutput(QObject *parent):
     QObject(parent)
 {
-    playingState = false;
+    playing = false;
+
+    alSourcef(source,AL_PITCH,1.0f);
+    alSourcef(source,AL_GAIN,1.0f);
+    alSourcefv(source,AL_POSITION, source0Pos);
+    alSourcefv(source,AL_VELOCITY, source0Vel);
+    alSourcei(source,AL_BUFFER, bufferNear);
+    alSourcei(source,AL_LOOPING, AL_FALSE);
+    timer.setInterval(1000);
+    timer.setSingleShot(true);
+    timer.start();
 }
 
 void soundoutput::setPosition(std::vector<float> pos)
 {
+    std::cout << pos[3] << " - " << pos[7] << " - " << pos[11] << std::endl;
+    if(timer.isActive())
+        return;
 
+    std::cout << " -->>>  " << pos[11]*-400.0f << std::endl;
+    stop();
+
+    bufferNear = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, pos[11]*-400.0f, 0.0, 0.5);
+    alSourcei(source, AL_BUFFER, bufferNear);
+    play();
+    timer.start();
 }
 
 void soundoutput::playPause(int msecs)
 {
+    if(playing)
+        stop();
+    else
+        play();
 }
 
 void soundoutput::stop()
 {
-    playingState = false;
+    playing = false;
+    alSourceStop(source);
+}
+
+void soundoutput::play()
+{
+    playing = true;
+    alSourcePlay(source);
 }
 
 

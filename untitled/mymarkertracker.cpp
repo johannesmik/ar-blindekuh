@@ -283,7 +283,7 @@ void MyMarkerTracker::queryForMarker()
 
         //rotate corners and transform coordinates
         estimateSquarePose(&transformationMatrixOpenGL[0], shiftedCornerPoints, 0.045);
-        qDebug() << QDateTime::currentMSecsSinceEpoch() << "detected marker: " << id;
+        //qDebug() << QDateTime::currentMSecsSinceEpoch() << "detected marker: " << id;
         result.push_back(QPair<std::vector<float>, int>(transformationMatrixOpenGL, id));
 
     } // end of iteration over contours

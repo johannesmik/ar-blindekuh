@@ -57,6 +57,7 @@ HEADERS  += mainwindow.h \
     highscorewidget.h \
     poseestimation.h \
     mymarkertracker.h \
-    soundoutput.h
+    soundoutput.h \
+    scenedescription.h
 
 FORMS    += mainwindow.ui

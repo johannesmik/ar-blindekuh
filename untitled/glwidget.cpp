@@ -1,27 +1,7 @@
 #include "glwidget.h"
 #include <GL/glut.h>
 #include <iostream>
-
-ALfloat listenerPos[]={0.0,0.0,0.0};
-ALfloat listenerVel[]={0.0,0.0,0.0};
-ALfloat	listenerOri[]={0.0,0.0,-1.0, 0.0,1.0,0.0};
-
-float marker0Pos[]={ 2.0, 0.0, 0.0};
-float marker1Pos[]={ 0.0, 0.0, 2.0};
-float marker2Pos[]={ -2.0, 0.0, 0.0};
-float marker3Pos[]={ 0.0, 0.0, -2.0};
-
-float player0Pos[]={0.0, 0.0, 0.0};
-float player0Dis = 6.0;
-float player0Ang = 90.0;
-
-ALfloat source0Pos[]={ 0.0, 0.0, -2.0};
-ALfloat source0Vel[]={ 0.0, 0.0, 0.0};
-
-float speaker0Pos[]={ 2.0, 0.0, 2.0};
-float speaker1Pos[]={ -2.0, 0.0, 2.0};
-float speaker2Pos[]={ -2.0, 0.0, -2.0};
-float speaker3Pos[]={ 2.0, 0.0, -2.0};
+//#include "scenedescription.h"
 
 
 int  activemarker = 0;
@@ -33,53 +13,53 @@ GLWidget::GLWidget(QWidget *parent) :
     QGLWidget(parent)
 {
 
-    qDebug("init GLWIDGET");
+//    qDebug("init GLWIDGET");
 
-    // Initialize ALUT
-    alListenerfv(AL_POSITION,listenerPos);
-    alListenerfv(AL_VELOCITY,listenerVel);
-    alListenerfv(AL_ORIENTATION,listenerOri);
+//    // Initialize ALUT
+//    alListenerfv(AL_POSITION,listenerPos);
+//    alListenerfv(AL_VELOCITY,listenerVel);
+//    alListenerfv(AL_ORIENTATION,listenerOri);
 
-    alGetError();
+//    alGetError();
 
-    // Generate buffers, or no sound will be produced
-    alGenBuffers(NUM_BUFFERS, buffer);
+//    // Generate buffers, or no sound will be produced
+//    alGenBuffers(NUM_BUFFERS, buffer);
 
-    if(alGetError() != AL_NO_ERROR)
-    {
-        qDebug("- Error creating buffers !!");
-    }
-    else
-    {
-        qDebug("Created buffers");
-    }
-
-
-    alGetError();
-    alGenSources(NUM_SOURCES, source);
-
-    if(alGetError() != AL_NO_ERROR) {
-        qDebug("- Error creating sources !!");
-    } else {
-        qDebug("Created sources");
-    }
-
-    alSourcef(source[0],AL_PITCH,1.0f);
-    alSourcef(source[0],AL_GAIN,1.0f);
-    alSourcefv(source[0],AL_POSITION,source0Pos);
-    alSourcefv(source[0],AL_VELOCITY,source0Vel);
-    alSourcei(source[0],AL_BUFFER,buffer[0]);
-    alSourcei(source[0],AL_LOOPING,AL_FALSE);
+//    if(alGetError() != AL_NO_ERROR)
+//    {
+//        qDebug("- Error creating buffers !!");
+//    }
+//    else
+//    {
+//        qDebug("Created buffers");
+//    }
 
 
-    // Set Timers
-    gametimer = new QTimer(this);
-    connect(gametimer, SIGNAL(timeout()), this, SLOT(game_mainloop()));
-    gametimer->start(30);
+//    alGetError();
+//    alGenSources(NUM_SOURCES, source);
 
-    soundtimer = new QTimer(this);
-    connect(soundtimer, SIGNAL(timeout()), this, SLOT(sound_mainloop()));
-    soundtimer->start(1500);
+//    if(alGetError() != AL_NO_ERROR) {
+//        qDebug("- Error creating sources !!");
+//    } else {
+//        qDebug("Created sources");
+//    }
+
+//    alSourcef(source[0],AL_PITCH,1.0f);
+//    alSourcef(source[0],AL_GAIN,1.0f);
+//    alSourcefv(source[0],AL_POSITION,source0Pos);
+//    alSourcefv(source[0],AL_VELOCITY,source0Vel);
+//    alSourcei(source[0],AL_BUFFER,buffer[0]);
+//    alSourcei(source[0],AL_LOOPING,AL_FALSE);
+
+
+//    // Set Timers
+//    gametimer = new QTimer(this);
+//    connect(gametimer, SIGNAL(timeout()), this, SLOT(game_mainloop()));
+//    gametimer->start(30);
+
+//    soundtimer = new QTimer(this);
+//    connect(soundtimer, SIGNAL(timeout()), this, SLOT(sound_mainloop()));
+//    soundtimer->start(1500);
 }
 
 
@@ -95,17 +75,17 @@ void GLWidget::initializeGL(){
 
 void GLWidget::paintGL(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) ;
-// Paint the Speakers
-    paintSpeaker(speaker0Pos, "Speaker 0");
-    paintSpeaker(speaker1Pos, "Speaker 1");
-    paintSpeaker(speaker2Pos, "Speaker 2");
-    paintSpeaker(speaker3Pos, "Speaker 3");
+//// Paint the Speakers
+//    paintSpeaker(speaker0Pos, "Speaker 0");
+//    paintSpeaker(speaker1Pos, "Speaker 1");
+//    paintSpeaker(speaker2Pos, "Speaker 2");
+//    paintSpeaker(speaker3Pos, "Speaker 3");
 
-// Paint the markers
-    paintMarker(marker0Pos, "Marker 0", activemarker == 0);
-    paintMarker(marker1Pos, "Marker 1", activemarker == 1);
-    paintMarker(marker2Pos, "Marker 2", activemarker == 2);
-    paintMarker(marker3Pos, "Marker 3", activemarker == 3);
+//// Paint the markers
+//    paintMarker(marker0Pos, "Marker 0", activemarker == 0);
+//    paintMarker(marker1Pos, "Marker 1", activemarker == 1);
+//    paintMarker(marker2Pos, "Marker 2", activemarker == 2);
+//    paintMarker(marker3Pos, "Marker 3", activemarker == 3);
 }
 
 void GLWidget::resizeGL(int width, int height)
@@ -152,24 +132,24 @@ void GLWidget::game_mainloop() {
 
 void GLWidget::sound_mainloop() {
 
-    soundtimer->stop();
-    alSourceStop(source[0]);
+//    soundtimer->stop();
+//    alSourceStop(source[0]);
 
-    calculate_frequency();
-    calculate_rate();
+//    calculate_frequency();
+//    calculate_rate();
 
-    player0Ang -= 5.0;
-    player0Dis -= 0.5;
+//    player0Ang -= 5.0;
+//    player0Dis -= 0.5;
 
-    buffer[0] = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, frequency, 0.0, 0.5);
-    alSourcei(source[0],AL_BUFFER,buffer[0]);
+//    buffer[0] = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, frequency, 0.0, 0.5);
+//    alSourcei(source[0],AL_BUFFER,buffer[0]);
 
-    qDebug("play sound");
-    alSourcePlay (source[0]);
+//    qDebug("play sound");
+//    alSourcePlay (source[0]);
 
 
-    // Restart the timer
-    soundtimer->start(rate);
+//    // Restart the timer
+//    soundtimer->start(rate);
 
 }
 
@@ -197,42 +177,3 @@ void GLWidget::paintMarker(float markerPos[], const char *name, bool active)
     print_text(markerPos[0], markerPos[1], markerPos[2], name);
 }
 
-void GLWidget::calculate_frequency() {
-
-    float angle = player0Ang;
-
-    if(angle >= 50.0) {
-        angle = 50.0;
-    }
-    if(angle <= 0.0) {
-        angle = 0.0;
-    }
-
-    float halbton = floor (angle / 5);
-
-    // C = 261.63 Hz, Cis 277.18, D 293.88, Es 311.13,
-    // E 329.63, F 349.23, Fis 370, G 392
-    // As 415.3, A 440, B 466.16, H 493.88
-    frequency = 261.63 * pow(2.0f, (halbton/12));
-    qDebug("frequenz ist %f", frequency);
-
-
-}
-void GLWidget::calculate_rate() {
-
-    float dis = player0Dis;
-
-    if(dis >= 5.0) {
-        dis = 5.0;
-    }
-    if(dis <= 0.0) {
-        dis = 0.01;
-    }
-
-    rate = (int) ceil (300 + 600 * dis);
-    if(rate <= 300) {
-        rate = 300;
-    }
-    qDebug("rate ist %i", rate);
-
-}
