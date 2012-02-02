@@ -38,13 +38,22 @@ void MyMarkerTracker::queryForMarker()
 //        cv::cvtColor(adaptivethreshold, test, CV_GRAY2BGR);
 //        emit(frameUpdate(test));
 
+
+
+
     CvMemStorage* memStorage = cvCreateMemStorage();
-    CvSeq* contours;
+    CvSeq* contoursSeq;
     IplImage adaptiveIPL = adaptivethreshold;
     cvFindContours(
-        &adaptiveIPL, memStorage, &contours, sizeof(CvContour),
+        &adaptiveIPL, memStorage, &contoursSeq, sizeof(CvContour),
         CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE
     );
+
+    for (; contoursSeq; contoursSeq = contoursSeq->h_next){
+        std::vector contour;
+        contour.a
+        contours.push_back(contoursSeq->first);
+    }
     return;
 
     contours->total;
@@ -65,7 +74,7 @@ void MyMarkerTracker::queryForMarker()
     for(int idx = 0; idx >= 0; idx = hierarchy[idx][0] )
     {
         std::vector<cv::Point> approxResult;
-        //cv::approxPolyDP(contours[idx], approxResult, 7.68789, true);
+        cv::approxPolyDP(contours[idx], approxResult, 7.68789, true);
 
         cv::Rect bound = boundingRect(approxResult);
         if(approxResult.size() != 4 || bound.area() < 30 || bound.height > frame.size().height - 10 || bound.width > frame.size().width - 10){
