@@ -95,86 +95,17 @@ void GLWidget::initializeGL(){
 
 void GLWidget::paintGL(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) ;
-
-
-
 // Paint the Speakers
-
-    glPushMatrix() ;
-    glTranslatef(speaker0Pos[0],speaker0Pos[1],speaker0Pos[2]) ;
-    glColor3f(1.0,0.0,0.0) ;
-    glutWireCube(0.5) ;
-    glPopMatrix() ;
-    print_text(speaker0Pos[0], speaker0Pos[1], speaker0Pos[2], "Speaker 0");
-
-    glPushMatrix() ;
-    glTranslatef(speaker1Pos[0],speaker1Pos[1],speaker1Pos[2]) ;
-    glColor3f(1.0,0.0,0.0) ;
-    glutWireCube(0.5) ;
-    glPopMatrix() ;
-    print_text(speaker1Pos[0], speaker1Pos[1], speaker1Pos[2], "Speaker 1");
-
-
-    glPushMatrix() ;
-    glTranslatef(speaker2Pos[0],speaker2Pos[1],speaker2Pos[2]) ;
-    glColor3f(1.0,0.6,0.0) ;
-    glutWireCube(0.5) ;
-    glPopMatrix() ;
-    print_text(speaker2Pos[0], speaker2Pos[1], speaker2Pos[2], "Speaker 2");
-
-    glPushMatrix() ;
-    glTranslatef(speaker3Pos[0],speaker3Pos[1],speaker3Pos[2]) ;
-    glColor3f(1.0,0.6,0.0) ;
-    glutWireCube(0.5) ;
-    glPopMatrix() ;
-    print_text(speaker3Pos[0], speaker3Pos[1], speaker3Pos[2], "Speaker 3");
+    paintSpeaker(speaker0Pos, "Speaker 0");
+    paintSpeaker(speaker1Pos, "Speaker 1");
+    paintSpeaker(speaker2Pos, "Speaker 2");
+    paintSpeaker(speaker3Pos, "Speaker 3");
 
 // Paint the markers
-    glPushMatrix() ;
-    glTranslatef(marker0Pos[0],marker0Pos[1],marker0Pos[2]) ;
-    if(activemarker == 0) {
-        glColor3f(0.0,0.0,1.0) ;
-    } else {
-        glColor3f(0.0,1.0,0.0) ;
-    }
-    glutWireCube(0.5) ;
-    glPopMatrix() ;
-    print_text(marker0Pos[0], marker0Pos[1], marker0Pos[2], "marker 0");
-
-    glPushMatrix() ;
-    glTranslatef(marker1Pos[0],marker1Pos[1],marker1Pos[2]) ;
-    if(activemarker == 1) {
-        glColor3f(0.0,0.0,1.0) ;
-    } else {
-        glColor3f(0.0,1.0,0.0) ;
-    }
-    glutWireCube(0.5) ;
-    glPopMatrix() ;
-    print_text(marker1Pos[0], marker1Pos[1], marker1Pos[2], "marker 1");
-
-
-    glPushMatrix() ;
-    glTranslatef(marker2Pos[0],marker2Pos[1],marker2Pos[2]) ;
-    if(activemarker == 2) {
-        glColor3f(0.0,0.0,1.0) ;
-    } else {
-        glColor3f(0.0,1.0,0.0) ;
-    }
-    glutWireCube(0.5) ;
-    glPopMatrix() ;
-    print_text(marker2Pos[0], marker2Pos[1], marker2Pos[2], "marker 2");
-
-    glPushMatrix() ;
-    glTranslatef(marker3Pos[0],marker3Pos[1],marker3Pos[2]) ;
-    if(activemarker == 3) {
-        glColor3f(0.0,0.0,1.0) ;
-    } else {
-        glColor3f(0.0,1.0,0.0) ;
-    }
-    glutWireCube(0.5) ;
-    glPopMatrix() ;
-    print_text(marker3Pos[0], marker3Pos[1], marker3Pos[2], "marker 3");
-
+    paintMarker(marker0Pos, "Marker 0", activemarker == 0);
+    paintMarker(marker1Pos, "Marker 1", activemarker == 1);
+    paintMarker(marker2Pos, "Marker 2", activemarker == 2);
+    paintMarker(marker3Pos, "Marker 3", activemarker == 3);
 }
 
 void GLWidget::resizeGL(int width, int height)
@@ -230,7 +161,7 @@ void GLWidget::sound_mainloop() {
     player0Ang -= 5.0;
     player0Dis -= 0.5;
 
-    buffer[0] = alutCreateBufferWaveform(ALUT_WAVEFORM_SAWTOOTH, frequency, 0.0, 0.5);
+    buffer[0] = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, frequency, 0.0, 0.5);
     alSourcei(source[0],AL_BUFFER,buffer[0]);
 
     qDebug("play sound");
@@ -241,6 +172,31 @@ void GLWidget::sound_mainloop() {
     soundtimer->start(rate);
 
 }
+
+void GLWidget::paintSpeaker(float speakerPos[], const char *name)
+{
+    glPushMatrix() ;
+    glTranslatef(speakerPos[0],speakerPos[1],speakerPos[2]) ;
+    glColor3f(1.0,0.0,0.0) ;
+    glutWireCube(0.5) ;
+    glPopMatrix() ;
+    print_text(speakerPos[0], speakerPos[1], speakerPos[2], name);
+}
+
+void GLWidget::paintMarker(float markerPos[], const char *name, bool active)
+{
+    glPushMatrix() ;
+    glTranslatef(markerPos[0],markerPos[1],markerPos[2]) ;
+    if(active) {
+        glColor3f(0.0,0.0,1.0) ;
+    } else {
+        glColor3f(0.0,1.0,0.0) ;
+    }
+    glutWireCube(0.5) ;
+    glPopMatrix() ;
+    print_text(markerPos[0], markerPos[1], markerPos[2], name);
+}
+
 void GLWidget::calculate_frequency() {
 
     float angle = player0Ang;

@@ -20,6 +20,8 @@ win32 {
     INCLUDEPATH += "C:\OpenCV2.1\include"
     INCLUDEPATH += "C:\OpenCV2.1\bin"
     INCLUDEPATH += "D:\blindekuh\opencv\opencv\build\include"
+    INCLUDEPATH += "D:\blindekuh\freealut-1.1.0-bin\freealut-1.1.0-bin\include"
+    INCLUDEPATH += "C:\Program Files\freeglut-2.4.0\include"
 
     # OpenAl and Alut
     INCLUDEPATH += "C:\Program Files\freealut\include"
