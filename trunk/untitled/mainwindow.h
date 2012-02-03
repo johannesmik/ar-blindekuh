@@ -22,7 +22,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 public slots:
-    void markerUpdate(std::vector<QPair<std::vector<float>,int> > m);
+//    void markerUpdate(std::vector<QPair<std::vector<float>,int> > m);
     
 private slots:
 

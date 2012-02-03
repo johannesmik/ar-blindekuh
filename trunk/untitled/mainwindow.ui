@@ -101,9 +101,9 @@ p, li { white-space: pre-wrap; }
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QPushButton" name="newGame">
+       <widget class="QPushButton" name="restartGame">
         <property name="text">
-         <string>Neues Spiel</string>
+         <string>Neu starten</string>
         </property>
        </widget>
       </item>

@@ -14,7 +14,7 @@ class soundoutput : public QObject
     Q_OBJECT
 public:
     soundoutput(scenedescription *s, QObject *parent = 0);
-    void setPosition(std::vector<float> pos);
+    void soundUpdate(float frequency, float rate);
 public slots:
     void playPause(int msecs);
     void stop();
@@ -28,9 +28,6 @@ private:
     ALuint	bufferNear;
     ALuint	source;
     scenedescription *scene;
-
-    float maxdist;
-    float mindist;
 
 };
 

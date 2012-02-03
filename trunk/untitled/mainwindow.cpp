@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->glLayout->addWidget(glWidget);
     sound = new soundoutput(scene, this);
 
-    game = new gamelogic(scene, this);
+    game = new gamelogic(scene, sound, this);
 
     // regularly query for marker positions
     frameQueryLoop.setInterval(50);
@@ -22,10 +22,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(tracker, SIGNAL(frameUpdate(cv::Mat)), ui->cvwidget, SLOT(frameUpdate(cv::Mat)));
     connect(tracker, SIGNAL(frameUpdateBw(cv::Mat)), ui->cvwidget, SLOT(frameUpdateBw(cv::Mat)));
 
-    connect(tracker, SIGNAL(markerPositionUpdate(std::vector<QPair<std::vector<float>,int> >)),
-            this, SLOT(markerUpdate(std::vector<QPair<std::vector<float>,int> >)));
+//    connect(tracker, SIGNAL(markerPositionUpdate(std::vector<QPair<std::vector<float>,int> >)),
+//            this, SLOT(markerUpdate(std::vector<QPair<std::vector<float>,int> >)));
 
     connect(ui->startGame, SIGNAL(clicked()), game, SIGNAL(startGame()));
+    connect(ui->restartGame, SIGNAL(clicked()), game, SIGNAL(newGame()));
 
     frameQueryLoop.start();
 }
@@ -35,13 +36,13 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::markerUpdate(std::vector<QPair<std::vector<float>,int> > markers)
-{
-    for(int i = 0; i<markers.size(); i++){
-        if(markers[i].second == 626){
-            sound->setPosition(markers[i].first);
-            glWidget->setPosition(markers[i].first);
-        }
+//void MainWindow::markerUpdate(std::vector<QPair<std::vector<float>,int> > markers)
+//{
+//    for(int i = 0; i<markers.size(); i++){
+//        if(markers[i].second == 626){
+//            sound->setPosition(markers[i].first);
+//            glWidget->setPosition(markers[i].first);
+//        }
 
-    }
-}
+//    }
+//}
