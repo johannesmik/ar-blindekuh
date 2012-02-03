@@ -15,18 +15,21 @@ class CVWidget: public QWidget
 {
         Q_OBJECT;
 
-  public:
+public:
         CVWidget(QWidget *parent=0);
         ~CVWidget();
 
+protected:
+        virtual void paintEvent(QPaintEvent *e);
+
+public slots:
+      void frameUpdate(const cv::Mat& frame);
+      void frameUpdateBw(const cv::Mat& bwFrame);
 
 private:
       QImage frameImage;
+      QImage frameImageBw;
 
-      void paintEvent(QPaintEvent *e);
-
-  public slots:
-      void frameUpdate(const cv::Mat& frame);
 
 };
 

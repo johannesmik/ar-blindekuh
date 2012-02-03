@@ -44,9 +44,12 @@ void MyMarkerTracker::queryForMarker()
 
     cv::cvtColor(frame, bw, CV_BGR2GRAY);
     IplImage bw_ipl(bw);
-    cv::threshold(bw, adaptivethreshold, 190.0, 255.0, cv::THRESH_BINARY|cv::THRESH_OTSU);
+    //cv::threshold(bw, adaptivethreshold, 190.0, 255.0, cv::THRESH_BINARY|cv::THRESH_OTSU);
+    cv::threshold(bw, adaptivethreshold, 240.0, 255.0, cv::THRESH_BINARY);
 //        cv::cvtColor(adaptivethreshold, test, CV_GRAY2BGR);
 //        emit(frameUpdate(test));
+    cv::cvtColor(adaptivethreshold, colorThreshold, CV_GRAY2RGB);
+    emit(frameUpdateBw(colorThreshold));
 
     //use c-bindings, c++ cv::finContours doesn't work on windows
     CvSeq* contoursSeq;
@@ -290,19 +293,6 @@ void MyMarkerTracker::queryForMarker()
     emit(markerPositionUpdate(result));
     cvClearMemStorage(memStorage);
 }
-
-/*
- Returns true if float x is infinite
-  */
-bool MyMarkerTracker::isinf(double x) {
-
-    if(x <= DBL_MAX && x>= DBL_MIN) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
 
 int MyMarkerTracker::subpixSampleSafe ( const IplImage* pSrc, CvPoint2D32f p )
 {

@@ -15,6 +15,7 @@ public:
 signals:
     void markerPositionUpdate(std::vector<QPair<std::vector<float>, int> >);
     void frameUpdate(cv::Mat frame);
+    void frameUpdateBw(cv::Mat frame);
 
 public slots:
     void queryForMarker();
@@ -22,12 +23,13 @@ public slots:
 private:
     int subpixSampleSafe ( const IplImage* pSrc, CvPoint2D32f p );
     bool isMarker(const cv::Mat &marker);
-    bool isinf(double x);
 
     cv::VideoCapture cap;
     cv::Mat bw;
     cv::Mat adaptivethreshold;
     cv::Mat test;
+    cv::Mat colorThreshold;
+
 
     std::vector<cv::Vec4i> hierarchy;
     cv::Mat frame;

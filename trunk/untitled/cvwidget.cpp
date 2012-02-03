@@ -20,9 +20,11 @@ void CVWidget::paintEvent(QPaintEvent *e)
     Q_UNUSED(e);
     //qDebug("q_image.height(): %i this->height(): %i", q_image.height(), this->height());
     QPainter painter(this);
-    //do not scale, as data is copied when scaled
-    painter.drawImage(0,0, frameImage.scaledToHeight(this->height()) );
-    //painter.drawImage(0,0, frameImage);
+    //scaling is more expensive, but nicer
+    QImage toPaint = frameImage.scaledToHeight(this->height()); //frameImage
+    painter.drawImage(0,0, toPaint);
+    painter.drawImage(toPaint.width(), 0, frameImageBw.scaledToHeight(this->height()) );
+
 
 }
 
@@ -32,4 +34,9 @@ void CVWidget::frameUpdate(const cv::Mat& frame)
     update();
 }
 
+void CVWidget::frameUpdateBw(const cv::Mat& bwFrame)
+{
+    frameImageBw = QImage(bwFrame.data, bwFrame.size().width, bwFrame.size().height, QImage::Format_RGB888);
+    update();
+}
 
