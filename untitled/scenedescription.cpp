@@ -3,6 +3,7 @@
 scenedescription::scenedescription(QObject *parent) :
     QObject(parent)
 {
+    init();
 }
 
 void scenedescription::init()

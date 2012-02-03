@@ -21,7 +21,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <property name="sizePolicy">
@@ -39,13 +39,19 @@
        <attribute name="title">
         <string>Webcam</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="CVWidget" name="cvwidget" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>640</width>
-            <height>480</height>
+            <width>9999999</width>
+            <height>16777215</height>
            </size>
           </property>
          </widget>

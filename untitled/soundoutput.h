@@ -29,6 +29,9 @@ private:
     ALuint	source;
     scenedescription *scene;
 
+    float maxdist;
+    float mindist;
+
 };
 
 #endif // SOUNDOUTPUT_H

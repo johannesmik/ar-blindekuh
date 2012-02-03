@@ -26,7 +26,8 @@ public:
 
 public slots:
     void game_mainloop();
-    void sound_mainloop();
+
+    void setPosition(std::vector<float> pos);
 
 private:
     void paintSpeaker(float speakerPos[], const char *name);
@@ -42,6 +43,7 @@ private:
     ALuint	source[NUM_SOURCES];
     ALuint  environment[NUM_ENVIRONMENTS];
     scenedescription *scene;
+    std::vector<float> position;
 
     
 };

@@ -17,8 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
     frameQueryLoop.setInterval(50);
     connect(&frameQueryLoop, SIGNAL(timeout()), tracker, SLOT(queryForMarker()));
     connect(tracker, SIGNAL(frameUpdate(cv::Mat)), ui->cvwidget, SLOT(frameUpdate(cv::Mat)));
+    connect(tracker, SIGNAL(frameUpdateBw(cv::Mat)), ui->cvwidget, SLOT(frameUpdateBw(cv::Mat)));
 
     connect(tracker, SIGNAL(markerPositionUpdate(std::vector<QPair<std::vector<float>,int> >)), this, SLOT(markerUpdate(std::vector<QPair<std::vector<float>,int> >)));
+
     frameQueryLoop.start();
 }
 
@@ -32,6 +34,7 @@ void MainWindow::markerUpdate(std::vector<QPair<std::vector<float>,int> > marker
     for(int i = 0; i<markers.size(); i++){
         if(markers[i].second == 626){
             sound->setPosition(markers[i].first);
+            glWidget->setPosition(markers[i].first);
         }
 
     }
