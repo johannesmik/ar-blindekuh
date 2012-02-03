@@ -290,7 +290,8 @@ void MyMarkerTracker::queryForMarker()
         result.push_back(QPair<std::vector<float>, int>(transformationMatrixOpenGL, id));
 
     } // end of iteration over contours
-    emit(markerPositionUpdate(result));
+    if(result.size()>0)
+        emit(markerPositionUpdate(result));
     cvClearMemStorage(memStorage);
 }
 
