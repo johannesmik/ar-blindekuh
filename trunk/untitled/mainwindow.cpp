@@ -13,13 +13,19 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->glLayout->addWidget(glWidget);
     sound = new soundoutput(scene, this);
 
+    game = new gamelogic(scene, this);
+
     // regularly query for marker positions
     frameQueryLoop.setInterval(50);
     connect(&frameQueryLoop, SIGNAL(timeout()), tracker, SLOT(queryForMarker()));
+
     connect(tracker, SIGNAL(frameUpdate(cv::Mat)), ui->cvwidget, SLOT(frameUpdate(cv::Mat)));
     connect(tracker, SIGNAL(frameUpdateBw(cv::Mat)), ui->cvwidget, SLOT(frameUpdateBw(cv::Mat)));
 
-    connect(tracker, SIGNAL(markerPositionUpdate(std::vector<QPair<std::vector<float>,int> >)), this, SLOT(markerUpdate(std::vector<QPair<std::vector<float>,int> >)));
+    connect(tracker, SIGNAL(markerPositionUpdate(std::vector<QPair<std::vector<float>,int> >)),
+            this, SLOT(markerUpdate(std::vector<QPair<std::vector<float>,int> >)));
+
+    connect(ui->startGame, SIGNAL(clicked()), game, SIGNAL(startGame()));
 
     frameQueryLoop.start();
 }
@@ -39,5 +45,3 @@ void MainWindow::markerUpdate(std::vector<QPair<std::vector<float>,int> > marker
 
     }
 }
-
-

@@ -50,7 +50,8 @@ SOURCES += main.cpp\
     poseestimation.cpp \
     mymarkertracker.cpp \
     soundoutput.cpp \
-    scenedescription.cpp
+    scenedescription.cpp \
+    gamelogic.cpp
 
 HEADERS  += mainwindow.h \
         glwidget.h \
@@ -59,6 +60,7 @@ HEADERS  += mainwindow.h \
     poseestimation.h \
     mymarkertracker.h \
     soundoutput.h \
-    scenedescription.h
+    scenedescription.h \
+    gamelogic.h
 
 FORMS    += mainwindow.ui
