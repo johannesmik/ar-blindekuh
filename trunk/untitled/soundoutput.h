@@ -14,7 +14,7 @@ class soundoutput : public QObject
     Q_OBJECT
 public:
     soundoutput(scenedescription *s, QObject *parent = 0);
-    void soundUpdate(float frequency, float rate);
+    void soundUpdate(float frequency);
 public slots:
     void playPause(int msecs);
     void stop();
@@ -23,9 +23,9 @@ public slots:
 private:
     float calculateFrequency(float angle);
     float calculateRate(float distance);
-    QTimer timer;
     bool playing;
-    ALuint	bufferNear;
+
+    ALuint	buffer;
     ALuint	source;
     scenedescription *scene;
 

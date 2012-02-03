@@ -16,7 +16,7 @@ soundoutput::soundoutput(scenedescription *s, QObject *parent):
     alGetError();
 
     // Generate buffers, or no sound will be produced
-    alGenBuffers(1, &bufferNear);
+    alGenBuffers(1, &buffer);
 
     if(alGetError() != AL_NO_ERROR)
     {
@@ -41,25 +41,18 @@ soundoutput::soundoutput(scenedescription *s, QObject *parent):
     alSourcef(source,AL_GAIN,1.0f);
     alSourcefv(source,AL_POSITION, scene->source0Pos);
     alSourcefv(source,AL_VELOCITY, scene->source0Vel);
-    alSourcei(source,AL_BUFFER, bufferNear);
+    alSourcei(source,AL_BUFFER, buffer);
     alSourcei(source,AL_LOOPING, AL_FALSE);
 
-    timer.setInterval(1000);
-    timer.setSingleShot(true);
-    timer.start();
+
 }
 
-void soundoutput::soundUpdate(float frequency, float rate)
+void soundoutput::soundUpdate(float frequency)
 {
-    if(timer.isActive())
-        return;
-
     stop();
-
-    bufferNear = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, frequency, 0.0, 0.20);
-    alSourcei(source, AL_BUFFER, bufferNear);
+    buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, frequency, 0.0, 0.20);
+    alSourcei(source, AL_BUFFER, buffer);
     play();
-    timer.start(rate);
 }
 
 void soundoutput::playPause(int msecs)
