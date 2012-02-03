@@ -8,6 +8,7 @@
 #include <vector>
 #include "glwidget.h"
 #include "soundoutput.h"
+#include "gamelogic.h"
 
 namespace Ui {
 class MainWindow;
@@ -23,6 +24,8 @@ public:
 public slots:
     void markerUpdate(std::vector<QPair<std::vector<float>,int> > m);
     
+private slots:
+
 private:
     Ui::MainWindow *ui;
     MyMarkerTracker *tracker;
@@ -30,6 +33,7 @@ private:
     soundoutput *sound;
     GLWidget *glWidget;
     scenedescription *scene;
+    gamelogic *game;
 };
 
 #endif // MAINWINDOW_H
