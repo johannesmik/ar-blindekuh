@@ -67,7 +67,7 @@ void scenedescription::init()
 
     speaker3Pos[0]=2.0;
     speaker3Pos[1]=0.0;
-    speaker3Pos[2]=2.0;
+    speaker3Pos[2]=-2.0;
 }
 
 
