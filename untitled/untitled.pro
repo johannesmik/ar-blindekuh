@@ -49,7 +49,8 @@ SOURCES += main.cpp\
     highscorewidget.cpp \
     poseestimation.cpp \
     mymarkertracker.cpp \
-    soundoutput.cpp
+    soundoutput.cpp \
+    scenedescription.cpp
 
 HEADERS  += mainwindow.h \
         glwidget.h \

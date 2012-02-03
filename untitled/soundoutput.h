@@ -7,12 +7,13 @@
 #include <math.h>
 #include <AL/alut.h>
 #include <iostream>
+#include "scenedescription.h"
 
 class soundoutput : public QObject
 {
     Q_OBJECT
 public:
-    soundoutput(QObject *parent = 0);
+    soundoutput(scenedescription *s, QObject *parent = 0);
     void setPosition(std::vector<float> pos);
 public slots:
     void playPause(int msecs);
@@ -26,6 +27,7 @@ private:
     bool playing;
     ALuint	bufferNear;
     ALuint	source;
+    scenedescription *scene;
 
 };
 

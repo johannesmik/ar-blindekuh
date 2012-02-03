@@ -11,12 +11,14 @@
 #include <QTimer>
 
 #include <cmath>
+#include "scenedescription.h"
+#include <QDebug>
 
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
 public:
-    explicit GLWidget(QWidget *parent = 0);
+    explicit GLWidget(scenedescription* s, QWidget *parent = 0);
 
     void initializeGL();
     void paintGL();
@@ -39,6 +41,7 @@ private:
     ALuint	buffer[NUM_BUFFERS];
     ALuint	source[NUM_SOURCES];
     ALuint  environment[NUM_ENVIRONMENTS];
+    scenedescription *scene;
 
     
 };

@@ -1,7 +1,6 @@
 #include "glwidget.h"
 #include <GL/glut.h>
 #include <iostream>
-//#include "scenedescription.h"
 
 
 int  activemarker = 0;
@@ -9,9 +8,10 @@ int  rate = 2000;
 float frequency = 1000;
 bool game_isactive = false;
 
-GLWidget::GLWidget(QWidget *parent) :
+GLWidget::GLWidget(scenedescription *s, QWidget *parent) :
     QGLWidget(parent)
 {
+    scene = s;
 
 //    qDebug("init GLWIDGET");
 
@@ -75,21 +75,22 @@ void GLWidget::initializeGL(){
 
 void GLWidget::paintGL(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) ;
-//// Paint the Speakers
-//    paintSpeaker(speaker0Pos, "Speaker 0");
-//    paintSpeaker(speaker1Pos, "Speaker 1");
-//    paintSpeaker(speaker2Pos, "Speaker 2");
-//    paintSpeaker(speaker3Pos, "Speaker 3");
+// Paint the Speakers
+    paintSpeaker(scene->speaker0Pos, "Speaker 0");
+    paintSpeaker(scene->speaker1Pos, "Speaker 1");
+    paintSpeaker(scene->speaker2Pos, "Speaker 2");
+    paintSpeaker(scene->speaker3Pos, "Speaker 3");
 
-//// Paint the markers
-//    paintMarker(marker0Pos, "Marker 0", activemarker == 0);
-//    paintMarker(marker1Pos, "Marker 1", activemarker == 1);
-//    paintMarker(marker2Pos, "Marker 2", activemarker == 2);
-//    paintMarker(marker3Pos, "Marker 3", activemarker == 3);
+// Paint the markers
+    paintMarker(scene->marker0Pos, "Marker 0", activemarker == 0);
+    paintMarker(scene->marker1Pos, "Marker 1", activemarker == 1);
+    paintMarker(scene->marker2Pos, "Marker 2", activemarker == 2);
+    paintMarker(scene->marker3Pos, "Marker 3", activemarker == 3);
 }
 
 void GLWidget::resizeGL(int width, int height)
 {
+    qDebug() << width << height;
     glViewport(0,0,(GLsizei)width,(GLsizei)height) ;
     glMatrixMode(GL_PROJECTION) ;
     glLoadIdentity() ;

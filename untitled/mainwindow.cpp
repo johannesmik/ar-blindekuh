@@ -8,6 +8,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     tracker = new MyMarkerTracker(this);
 
+    scene = new scenedescription(this);
+    glWidget = new GLWidget(scene, this);
+    ui->glLayout->addWidget(glWidget);
+    sound = new soundoutput(scene, this);
 
     // regularly query for marker positions
     frameQueryLoop.setInterval(50);
@@ -27,7 +31,7 @@ void MainWindow::markerUpdate(std::vector<QPair<std::vector<float>,int> > marker
 {
     for(int i = 0; i<markers.size(); i++){
         if(markers[i].second == 626){
-            sound.setPosition(markers[i].first);
+            sound->setPosition(markers[i].first);
         }
 
     }
