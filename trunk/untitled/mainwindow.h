@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QPair>
 #include <vector>
+#include "glwidget.h"
 #include "soundoutput.h"
 
 namespace Ui {
@@ -26,7 +27,9 @@ private:
     Ui::MainWindow *ui;
     MyMarkerTracker *tracker;
     QTimer frameQueryLoop;
-    soundoutput sound;
+    soundoutput *sound;
+    GLWidget *glWidget;
+    scenedescription *scene;
 };
 
 #endif // MAINWINDOW_H

@@ -1,16 +1,17 @@
 #include "soundoutput.h"
-#include "scenedescription.h"
 
 
-soundoutput::soundoutput(QObject *parent):
+
+soundoutput::soundoutput(scenedescription *s, QObject *parent):
     QObject(parent)
 {
+    scene = s;
     playing = false;
 
     alSourcef(source,AL_PITCH,1.0f);
     alSourcef(source,AL_GAIN,1.0f);
-    alSourcefv(source,AL_POSITION, source0Pos);
-    alSourcefv(source,AL_VELOCITY, source0Vel);
+    alSourcefv(source,AL_POSITION, scene->source0Pos);
+    alSourcefv(source,AL_VELOCITY, scene->source0Vel);
     alSourcei(source,AL_BUFFER, bufferNear);
     alSourcei(source,AL_LOOPING, AL_FALSE);
     timer.setInterval(1000);
