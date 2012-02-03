@@ -1,5 +1,7 @@
 #include "gamelogic.h"
 
+#define PI 3.14159265
+
 #define MAX_FREQ 5000
 #define MIN_FREQ 300
 #define MAX_ANGLE 90
@@ -10,9 +12,12 @@
 #define MAX_DISTANCE 0.70f
 #define MIN_DISTANCE 0.15f
 
-gamelogic::gamelogic(scenedescription* s, QObject *parent) :
+gamelogic::gamelogic(scenedescription* s,  soundoutput *so, QObject *parent) :
     QObject(parent)
 {
+    scene = s;
+    sound = so;
+
     state_initial = new QState();
     search_marker1 = new QState();
     search_marker2 = new QState();
@@ -27,17 +32,29 @@ gamelogic::gamelogic(scenedescription* s, QObject *parent) :
     m.addState(search_marker4);
     m.addState(state_finished);
 
+    m.setInitialState(state_initial);
+
     state_initial->addTransition(this, SIGNAL(startGame()), search_marker1);
     search_marker1->addTransition(this, SIGNAL(found()), search_marker2);
     search_marker2->addTransition(this, SIGNAL(found()), search_marker3);
     search_marker3->addTransition(this, SIGNAL(found()), search_marker4);
     search_marker4->addTransition(this, SIGNAL(found()), state_finished);
 
-    connect(this, SIGNAL(startGame()), this, SLOT(enterSearchMarker1()));
+    search_marker1->addTransition(this, SIGNAL(newGame()), state_initial);
+    search_marker2->addTransition(this, SIGNAL(newGame()), state_initial);
+    search_marker3->addTransition(this, SIGNAL(newGame()), state_initial);
+    search_marker4->addTransition(this, SIGNAL(newGame()), state_initial);
+    state_finished->addTransition(this, SIGNAL(newGame()), state_initial);
+
 
     connect(search_marker1, SIGNAL(entered()), this, SLOT(enterSearchMarker1()));
+    connect(state_initial, SIGNAL(entered()), this, SLOT(startedGame()));
 
-    m.setInitialState(state_initial);
+    m.start();
+
+
+    timer.setSingleShot(true);
+    connect(&timer, SIGNAL(timeout()), this, SLOT(defaultSound()));
 }
 
 gamelogic::~gamelogic()
@@ -55,16 +72,66 @@ gamelogic::~gamelogic()
 void gamelogic::setPosition(std::vector<float> pos)
 {
     position = pos;
+    float distance = sqrt(pos[3]*pos[3] + pos[7]*pos[7] + pos[11] * pos[11]);
 
-}
+    float crossproduct = -pos[10]/sqrt(pos[2]*pos[2] + pos[6]*pos[6] + pos[10]*pos[10]);
+    float angle = acosf(crossproduct);
+    float angleDegree =180/(PI)*angle;
 
-void gamelogic::newGame()
-{
-    m.start();
+
+//    std::cout << pos[3] << " - " << pos[7] << " - " << pos[11] << std::endl;
+//    std::cout << " -->>>  distance: " << distance <<  "(max: "<< maxdist <<", min: "<< mindist <<")" << std::endl;
+//    std::cout << " -->>>  crossproduct: " << crossproduct << std::endl;
+//    std::cout << " -->>>  arccos: " << angle << ", degrees: " << angleDegree <<std::endl;
+
+    sound->soundUpdate(calculateFrequency(angleDegree), calculateRate(distance));
+    timer.start(3000);
 }
 
 void gamelogic::enterSearchMarker1()
 {
-    qDebug("sdfsdfsdf");
+    timer.start(0);
+    qDebug("marker1!!");
+}
+
+void gamelogic::startedGame()
+{
+    qDebug("New Game starts!!");
+}
+
+void gamelogic::defaultSound()
+{
+    sound->soundUpdate(100, 500); /*frequ = 100, rate = 500*/
+}
+
+float gamelogic::calculateFrequency(float angle) {
+
+    if(angle >= MAX_ANGLE) {
+        angle = MAX_ANGLE;
+    }
+
+    float halbton = floor ((MAX_ANGLE - angle) / 4);
+
+    // C = 261.63 Hz, Cis 277.18, D 293.88, Es 311.13,
+    // E 329.63, F 349.23, Fis 370, G 392
+    // As 415.3, A 440, B 466.16, H 493.88
+    float frequency = MIN_FREQ * pow(2.0f, (halbton/6));
+    qDebug("frequenz ist %f", frequency);
+
+    return frequency;
+}
+
+float gamelogic::calculateRate(float distance) {
+
+
+    if(distance >= MAX_DISTANCE) {
+        distance = MAX_DISTANCE;
+    }
+
+    float rate = MIN_RATE + (MAX_RATE - MIN_RATE)*distance/MAX_DISTANCE;
+
+    qDebug("rate ist %f", rate);
+
+    return rate;
 }
 
