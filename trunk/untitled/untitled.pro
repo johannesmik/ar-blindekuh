@@ -51,7 +51,8 @@ SOURCES += main.cpp\
     mymarkertracker.cpp \
     soundoutput.cpp \
     scenedescription.cpp \
-    gamelogic.cpp
+    gamelogic.cpp \
+    highscore.cpp
 
 HEADERS  += mainwindow.h \
         glwidget.h \
@@ -61,6 +62,7 @@ HEADERS  += mainwindow.h \
     mymarkertracker.h \
     soundoutput.h \
     scenedescription.h \
-    gamelogic.h
+    gamelogic.h \
+    highscore.h
 
 FORMS    += mainwindow.ui

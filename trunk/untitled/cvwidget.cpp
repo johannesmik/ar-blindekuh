@@ -20,12 +20,14 @@ void CVWidget::paintEvent(QPaintEvent *e)
     Q_UNUSED(e);
     //qDebug("q_image.height(): %i this->height(): %i", q_image.height(), this->height());
     QPainter painter(this);
+
     //scaling is more expensive, but nicer
-    QImage toPaint = frameImage.scaledToHeight(this->height()); //frameImage
-    painter.drawImage(0,0, toPaint);
-    painter.drawImage(toPaint.width(), 0, frameImageBw.scaledToHeight(this->height()) );
-
-
+    QSize imgSize(width()/2, height());
+    QImage paintColor = frameImage.scaled(imgSize, Qt::KeepAspectRatio);
+    QImage paintBw = frameImageBw.scaled(imgSize, Qt::KeepAspectRatio);
+    int topPosition = (height()-paintColor.height())/2;
+    painter.drawImage(0,topPosition, paintColor);
+    painter.drawImage(paintColor.width(), topPosition, paintBw);
 }
 
 void CVWidget::frameUpdate(const cv::Mat& frame)

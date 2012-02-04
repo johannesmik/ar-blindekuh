@@ -6,8 +6,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    score = new highscore(this);
+    ui->tableView->setModel(score);
     ui->scoreLabel->setText("");
     tracker = new MyMarkerTracker(this);
+    connect(ui->verticalSlider, SIGNAL(valueChanged(int)), tracker, SLOT(setThreshold(int)));
+    ui->verticalSlider->setValue(127);
 
     scene = new scenedescription(this);
     glWidget = new GLWidget(scene, this);
@@ -29,16 +33,35 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->startGame, SIGNAL(clicked()), game, SIGNAL(startGame()));
     connect(ui->restartGame, SIGNAL(clicked()), game, SIGNAL(newGame()));
     connect(game, SIGNAL(finishedGameIn(qint64)), this, SLOT(updateLabel(qint64)));
+    connect(game, SIGNAL(finishedGameIn(qint64)), this, SLOT(enterHighscore(qint64)));
+    connect(ui->deleteHighscoreButton, SIGNAL(clicked()), score, SLOT(deleteHighscores()));
 
     frameQueryLoop.start();
 }
+
+
 
 void MainWindow::updateLabel(qint64 msecs)
 {
     ui->scoreLabel->setText(QString("Oh yeah, du hast es in ").append(QString::number(msecs)).append(" Sekunden geschafft. "));
 }
 
+void MainWindow::enterHighscore(qint64 msecs)
+{
+    bool ok;
+    QString q = QString("Du hast ").append(QString::number(msecs/1000)).append(" Sekunden gebraucht. Wie ist dein Name?");
+    QString name = QInputDialog::getText(this, "Highscore eintragen",q, QLineEdit::Normal,"sfsdfdsf", &ok);
+    if(ok && !name.isEmpty()){
+        score->addHighscore(name, msecs);
+    }
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    score->addHighscore(QString("test"), QDateTime::currentDateTimeUtc().toMSecsSinceEpoch());
 }

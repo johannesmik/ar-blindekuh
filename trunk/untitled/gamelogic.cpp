@@ -24,13 +24,13 @@ gamelogic::gamelogic(scenedescription* s,  soundoutput *so, QObject *parent) :
 
     markerList << 626 << 1680 << 90 << 7236;
 
-
-    state_initial = new QState();
-    search_marker1 = new QState();
-    search_marker2 = new QState();
-    search_marker3 = new QState();
-    search_marker4 = new QState();
-    state_finished = new QState();
+    allStates = new QState();
+    state_initial = new QState(allStates);
+    search_marker1 = new QState(allStates);
+    search_marker2 = new QState(allStates);
+    search_marker3 = new QState(allStates);
+    search_marker4 = new QState(allStates);
+    state_finished = new QState(allStates);
 
     m.addState(state_initial);
     m.addState(search_marker1);
@@ -163,9 +163,9 @@ void gamelogic::finishedGame()
 {
     qint64 elapsedTime = scoreTimer.elapsed();
     qDebug() << "elapsed time" << elapsedTime;
-    emit(finishedGameIn(elapsedTime));
-    emit(newGame());
     defaultSoundTimer.stop();
+    emit(newGame());
+    emit(finishedGameIn(elapsedTime));
 }
 
 void gamelogic::startedGame()
