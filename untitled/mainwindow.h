@@ -28,8 +28,6 @@ private slots:
     void updateLabel(qint64 msecs);
     void enterHighscore(qint64 msecs);
 
-    void on_pushButton_3_clicked();
-
 private:
     Ui::MainWindow *ui;
     MyMarkerTracker *tracker;

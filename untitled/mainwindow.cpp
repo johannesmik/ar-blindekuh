@@ -7,7 +7,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     score = new highscore(this);
-    ui->tableView->setModel(score);
+    QSortFilterProxyModel *filter = new QSortFilterProxyModel(this);
+    filter->setSourceModel(score);
+    ui->tableView->setModel(filter);
+
     ui->scoreLabel->setText("");
     tracker = new MyMarkerTracker(this);
     connect(ui->verticalSlider, SIGNAL(valueChanged(int)), tracker, SLOT(setThreshold(int)));
@@ -59,9 +62,4 @@ void MainWindow::enterHighscore(qint64 msecs)
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::on_pushButton_3_clicked()
-{
-    score->addHighscore(QString("test"), QDateTime::currentDateTimeUtc().toMSecsSinceEpoch());
 }
