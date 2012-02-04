@@ -9,6 +9,7 @@
 #include "glwidget.h"
 #include "soundoutput.h"
 #include "gamelogic.h"
+#include "highscore.h"
 
 namespace Ui {
 class MainWindow;
@@ -25,6 +26,9 @@ public slots:
     
 private slots:
     void updateLabel(qint64 msecs);
+    void enterHighscore(qint64 msecs);
+
+    void on_pushButton_3_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -34,6 +38,7 @@ private:
     GLWidget *glWidget;
     scenedescription *scene;
     gamelogic *game;
+    highscore *score;
 };
 
 #endif // MAINWINDOW_H

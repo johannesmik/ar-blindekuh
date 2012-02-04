@@ -21,7 +21,6 @@ MyMarkerTracker::MyMarkerTracker(QObject *parent):
     cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
     cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
     memStorage = cvCreateMemStorage();;
-
 }
 
 MyMarkerTracker::~MyMarkerTracker()
@@ -44,10 +43,11 @@ void MyMarkerTracker::queryForMarker()
 
     cv::cvtColor(frame, bw, CV_BGR2GRAY);
     IplImage bw_ipl(bw);
-    cv::threshold(bw, adaptivethreshold, 190.0, 255.0, cv::THRESH_BINARY|cv::THRESH_OTSU);
-    //cv::threshold(bw, adaptivethreshold, 240.0, 255.0, cv::THRESH_BINARY);
-//        cv::cvtColor(adaptivethreshold, test, CV_GRAY2BGR);
-//        emit(frameUpdate(test));
+    if(thresholdValue == 0)
+        cv::threshold(bw, adaptivethreshold, 190.0, 255.0, cv::THRESH_BINARY|cv::THRESH_OTSU);
+    else
+        cv::threshold(bw, adaptivethreshold, thresholdValue, 255.0, cv::THRESH_BINARY);
+
     cv::cvtColor(adaptivethreshold, colorThreshold, CV_GRAY2RGB);
     emit(frameUpdateBw(colorThreshold));
 
@@ -58,27 +58,12 @@ void MyMarkerTracker::queryForMarker()
         &adaptiveIPL, memStorage, &contoursSeq, sizeof(CvContour),
         CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE
     );
-    //but convert result back to original datastructure
-//    for (; contoursSeq; contoursSeq = contoursSeq->h_next){
-//        std::vector<cv::Point> contourVec;
-//        contourVec.resize(contoursSeq->total);
-//        cvCvtSeqToArray(contoursSeq, &contourVec[0]);
-//        contours.push_back(contourVec);
-//    }
 
-//    cv::findContours(adaptivethreshold, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
-//    if(contours.size() == 0){
-//        qDebug() << "invalid frame"; // when the camera is no yet initialized, we get a timeout, so just wait for next frame
-//        return;
-//    }
-
-    // this data structure is send via a signal to the opengl threads
+    // this data structure is send via a signal to the users of this class
     std::vector<QPair<std::vector<float>, int> > result;
 
 
     //iterate over all found contours
-    //for(int idx = 0; idx < contours.size(); idx++)
-    //for(int idx = 0; idx >= 0; idx = hierarchy[idx][0] )
     for (; contoursSeq; contoursSeq = contoursSeq->h_next)
     {
         std::vector<cv::Point> approxResult;
@@ -293,6 +278,11 @@ void MyMarkerTracker::queryForMarker()
     if(result.size()>0)
         emit(markerPositionUpdate(result));
     cvClearMemStorage(memStorage);
+}
+
+void MyMarkerTracker::setThreshold(int val)
+{
+    thresholdValue = val;
 }
 
 int MyMarkerTracker::subpixSampleSafe ( const IplImage* pSrc, CvPoint2D32f p )
