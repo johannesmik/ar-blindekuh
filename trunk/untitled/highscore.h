@@ -2,7 +2,6 @@
 #define HIGHSCORE_H
 
 #include <QObject>
-#include <QSettings>
 #include <QAbstractTableModel>
 #include <QDebug>
 
@@ -16,8 +15,6 @@ public:
     virtual int columnCount(const QModelIndex &parent) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-//    virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
-//    virtual bool insertRows(int row, int count, const QModelIndex &parent);
 
 signals:
     
