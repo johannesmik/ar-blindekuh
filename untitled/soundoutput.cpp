@@ -6,6 +6,7 @@ soundoutput::soundoutput(QObject *parent):
     QObject(parent)
 {
     playing = false;
+    alutInit(NULL, NULL);
 
     ALfloat listenerPos[] = {0.0f, 0.0f, 0.0f};
     ALfloat listenerVel[] = {0.0f, 0.0f, 0.0f};
@@ -23,11 +24,9 @@ soundoutput::soundoutput(QObject *parent):
 
     if(alGetError() != AL_NO_ERROR)
     {
-        qDebug("- Error creating buffers !!");
-    }
-    else
-    {
-        qDebug("Created buffers");
+        qDebug() << "- Error creating buffers !!";
+    } else {
+        qDebug() <<"Created buffers";
     }
 
 
@@ -73,6 +72,31 @@ void soundoutput::playPause(int msecs)
 void soundoutput::updateSourcePosition(ALfloat pos[])
 {
     alSourcefv(source, AL_POSITION, pos);
+}
+
+void soundoutput::playSuccessSound()
+{
+    stop();
+//    buffer = alutCreateBufferFromFile("..\..\win.wav");
+//    qDebug() << "buffer" << (buffer) << alutGetErrorString (alutGetError ());
+    buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, 523.251, 0.0, 0.20);
+    alSourcei(source, AL_BUFFER, buffer);
+    play();
+    alutSleep(0.2);
+    stop();
+    buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, 659.255, 0.0, 0.20);
+    alSourcei(source, AL_BUFFER, buffer);
+    play();
+    alutSleep(0.2);
+    stop();
+    buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, 783.991, 0.0, 0.20);
+    alSourcei(source, AL_BUFFER, buffer);
+    play();
+    alutSleep(0.2);
+    stop();
+    buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, 1046.50, 0.0, 0.60);
+    alSourcei(source, AL_BUFFER, buffer);
+    play();
 }
 
 void soundoutput::stop()
