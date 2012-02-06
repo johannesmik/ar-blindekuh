@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent) :
     filter->setSourceModel(score);
     ui->tableView->setModel(filter);
 
-    ui->scoreLabel->setText("");
     tracker = new MyMarkerTracker(this);
     connect(ui->verticalSlider, SIGNAL(valueChanged(int)), tracker, SLOT(setThreshold(int)));
     ui->verticalSlider->setValue(127);
@@ -19,9 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
     scene = new scenedescription(this);
     glWidget = new GLWidget(scene, this);
     ui->glLayout->addWidget(glWidget);
-    sound = new soundoutput(scene, this);
+    sound = new soundoutput(this);
 
-    game = new gamelogic(scene, sound, this);
+    game = new gamelogic(sound, this);
 
     // regularly query for marker positions
     frameQueryLoop.setInterval(50);
@@ -31,25 +30,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(tracker, SIGNAL(frameUpdateBw(cv::Mat)), ui->cvwidget, SLOT(frameUpdateBw(cv::Mat)));
 
     connect(tracker, SIGNAL(markerPositionUpdate(std::vector<QPair<std::vector<float>,int> >)),
-            game, SLOT(setPositions(std::vector<QPair<std::vector<float>,int> >)));
+            game, SLOT(handlePositionUpdate(std::vector<QPair<std::vector<float>,int> >)));
 
     connect(ui->startGame, SIGNAL(clicked()), game, SIGNAL(startGame()));
     connect(ui->restartGame, SIGNAL(clicked()), game, SIGNAL(newGame()));
-    connect(game, SIGNAL(finishedGameIn(qint64)), this, SLOT(updateLabel(qint64)));
-    connect(game, SIGNAL(finishedGameIn(qint64)), this, SLOT(enterHighscore(qint64)));
+    connect(game, SIGNAL(finishedGameIn(qint64)), this, SLOT(handleFinishedGame(qint64)));
     connect(ui->deleteHighscoreButton, SIGNAL(clicked()), score, SLOT(deleteHighscores()));
 
     frameQueryLoop.start();
 }
 
-
-
-void MainWindow::updateLabel(qint64 msecs)
-{
-    ui->scoreLabel->setText(QString("Oh yeah, du hast es in ").append(QString::number(msecs)).append(" Sekunden geschafft. "));
-}
-
-void MainWindow::enterHighscore(qint64 msecs)
+void MainWindow::handleFinishedGame(qint64 msecs)
 {
     bool ok;
     QString q = QString("Du hast ").append(QString::number(msecs/1000)).append(" Sekunden gebraucht. Wie ist dein Name?");

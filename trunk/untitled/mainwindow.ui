@@ -138,16 +138,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="scoreLabel">
-        <property name="text">
-         <string>label</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>

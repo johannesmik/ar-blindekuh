@@ -48,7 +48,9 @@ QVariant highscore::data(const QModelIndex &index, int role) const
     if(index.column() == 0){
         return item.first;
     } else if(index.column() == 1) {
-        return item.second;
+        double secs = item.second;
+        secs /= 1000;
+        return QString("%1 Sekunden").arg(QString::number(secs, 'f', 2));
     } else {
         return QVariant();
     }

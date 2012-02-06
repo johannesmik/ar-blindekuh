@@ -2,16 +2,19 @@
 
 
 
-soundoutput::soundoutput(scenedescription *s, QObject *parent):
+soundoutput::soundoutput(QObject *parent):
     QObject(parent)
 {
-    scene = s;
     playing = false;
 
+    ALfloat listenerPos[] = {0.0f, 0.0f, 0.0f};
+    ALfloat listenerVel[] = {0.0f, 0.0f, 0.0f};
+    ALfloat listenerOri[] = {0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f};
+
     // Initialize ALUT
-    alListenerfv(AL_POSITION, scene->listenerPos);
-    alListenerfv(AL_VELOCITY, scene->listenerVel);
-    alListenerfv(AL_ORIENTATION, scene->listenerOri);
+    alListenerfv(AL_POSITION, listenerPos);
+    alListenerfv(AL_VELOCITY, listenerVel);
+    alListenerfv(AL_ORIENTATION, listenerOri);
 
     alGetError();
 
@@ -37,10 +40,14 @@ soundoutput::soundoutput(scenedescription *s, QObject *parent):
         qDebug("Created sources");
     }
 
+    //Setup default source parameters
+    ALfloat sourcePos[]= {0.0f, 0.0f, 0.0f};
+    ALfloat sourceVel[]= {0.0f, 0.0f, 0.0f};
+
     alSourcef(source,AL_PITCH,1.0f);
     alSourcef(source,AL_GAIN,1.0f);
-    alSourcefv(source,AL_POSITION, scene->source0Pos);
-    alSourcefv(source,AL_VELOCITY, scene->source0Vel);
+    alSourcefv(source,AL_POSITION, sourcePos);
+    alSourcefv(source,AL_VELOCITY, sourceVel);
     alSourcei(source,AL_BUFFER, buffer);
     alSourcei(source,AL_LOOPING, AL_FALSE);
 
@@ -61,6 +68,11 @@ void soundoutput::playPause(int msecs)
         stop();
     else
         play();
+}
+
+void soundoutput::updateSourcePosition(ALfloat pos[])
+{
+    alSourcefv(source, AL_POSITION, pos);
 }
 
 void soundoutput::stop()

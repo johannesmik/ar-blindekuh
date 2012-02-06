@@ -25,8 +25,7 @@ public:
 public slots:
     
 private slots:
-    void updateLabel(qint64 msecs);
-    void enterHighscore(qint64 msecs);
+    void handleFinishedGame(qint64 msecs);
 
 private:
     Ui::MainWindow *ui;
