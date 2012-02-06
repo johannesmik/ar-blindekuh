@@ -136,6 +136,7 @@ void gamelogic::finishedGame()
     qint64 elapsedTime = scoreTimer.elapsed();
     qDebug() << "elapsed time" << elapsedTime;
     defaultSoundTimer.stop();
+    sound->playSuccessSound();
     emit(newGame());
     emit(finishedGameIn(elapsedTime));
 }

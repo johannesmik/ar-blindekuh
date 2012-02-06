@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QDebug>
 #include <vector>
 #include <math.h>
 #include <AL/alut.h>
@@ -17,6 +18,7 @@ public:
 public slots:
     void playPause(int msecs);
     void updateSourcePosition(ALfloat pos[]);
+    void playSuccessSound();
     void stop();
     void play();
 
