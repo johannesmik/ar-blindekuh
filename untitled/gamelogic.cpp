@@ -1,4 +1,5 @@
 #include "gamelogic.h"
+#include <QDateTime>
 
 #define PI 3.14159265
 
@@ -16,49 +17,41 @@
 #define MAX_DISTANCE 0.70f
 #define MIN_DISTANCE 0.15f
 
-gamelogic::gamelogic(scenedescription* s,  soundoutput *so, QObject *parent) :
+gamelogic::gamelogic(soundoutput *so, QObject *parent) :
     QObject(parent)
 {
-    scene = s;
+    qsrand(QDateTime::currentMSecsSinceEpoch());
     sound = so;
 
-    markerList << 626 << 1680 << 90 << 7236;
+    marker *m1 = new marker(626,  2, 0, 0, this);
+    marker *m2 = new marker(1680, 0, 0, 2, this);
+    marker *m3 = new marker(90,  -2, 0, 0, this);
+    marker *m4 = new marker(7236, 0, 0,-2, this);
+
+    allMarkers << m1 << m2 << m3 << m4;
 
     allStates = new QState();
     state_initial = new QState(allStates);
-    search_marker1 = new QState(allStates);
-    search_marker2 = new QState(allStates);
-    search_marker3 = new QState(allStates);
-    search_marker4 = new QState(allStates);
+    searchNextMarker = new QState(allStates);
+    foundCurrentMarker = new QState(allStates);
     state_finished = new QState(allStates);
+    allStates->setInitialState(state_initial);
 
-    m.addState(state_initial);
-    m.addState(search_marker1);
-    m.addState(search_marker2);
-    m.addState(search_marker3);
-    m.addState(search_marker4);
-    m.addState(state_finished);
+    m.addState(allStates);
 
-    m.setInitialState(state_initial);
+    m.setInitialState(allStates);
 
-    state_initial->addTransition(this, SIGNAL(startGame()), search_marker1);
-    search_marker1->addTransition(this, SIGNAL(found()), search_marker2);
-    search_marker2->addTransition(this, SIGNAL(found()), search_marker3);
-    search_marker3->addTransition(this, SIGNAL(found()), search_marker4);
-    search_marker4->addTransition(this, SIGNAL(found()), state_finished);
-
-    search_marker1->addTransition(this, SIGNAL(newGame()), state_initial);
-    search_marker2->addTransition(this, SIGNAL(newGame()), state_initial);
-    search_marker3->addTransition(this, SIGNAL(newGame()), state_initial);
-    search_marker4->addTransition(this, SIGNAL(newGame()), state_initial);
-    state_finished->addTransition(this, SIGNAL(newGame()), state_initial);
+    state_initial->addTransition(this, SIGNAL(startGame()), searchNextMarker);
+    searchNextMarker->addTransition(this, SIGNAL(found()), foundCurrentMarker);
+    foundCurrentMarker->addTransition(this, SIGNAL(foundAll()), state_finished);
+    foundCurrentMarker->addTransition(this, SIGNAL(searchNext()), searchNextMarker);
+    allStates->addTransition(this, SIGNAL(newGame()), state_initial);
 
 
-    connect(search_marker1, SIGNAL(entered()), this, SLOT(enterSearchMarker1()));
-    connect(search_marker2, SIGNAL(entered()), this, SLOT(enterSearchMarker2()));
-    connect(search_marker3, SIGNAL(entered()), this, SLOT(enterSearchMarker3()));
-    connect(search_marker4, SIGNAL(entered()), this, SLOT(enterSearchMarker4()));
-    connect(state_initial, SIGNAL(entered()), this, SLOT(startedGame()));
+    connect(searchNextMarker, SIGNAL(entered()), this, SLOT(enterSearchNextMarker()));
+    connect(foundCurrentMarker, SIGNAL(entered()), this, SLOT(foundMarker()));
+    connect(state_initial, SIGNAL(entered()), this, SLOT(handleNewGame()));
+    connect(state_initial, SIGNAL(exited()), this, SLOT(handleStartGame()));
     connect(state_finished, SIGNAL(entered()), this, SLOT(finishedGame()));
 
     m.start();
@@ -75,16 +68,15 @@ gamelogic::gamelogic(scenedescription* s,  soundoutput *so, QObject *parent) :
 gamelogic::~gamelogic()
 {
     delete state_initial;
-    delete search_marker1;
-    delete search_marker2;
-    delete search_marker3;
-    delete search_marker4;
+
     delete state_finished;
+    delete searchNextMarker;
+    delete foundCurrentMarker;
 }
 
 
 
-void gamelogic::setPositions(std::vector<QPair<std::vector<float>,int> > markers)
+void gamelogic::handlePositionUpdate(std::vector<QPair<std::vector<float>,int> > markers)
 {
     QSet<QAbstractState*> set = m.configuration();
     if(set.contains(state_initial) || set.contains(state_finished)){
@@ -98,7 +90,7 @@ void gamelogic::setPositions(std::vector<QPair<std::vector<float>,int> > markers
     std::vector<float> pos;
     int i;
     for(i = 0; i<markers.size(); i++){
-        if(markers[i].second == currentMarker){
+        if(markers[i].second == currentMarker->getMarkerID()){
             pos = markers[i].first;
             break;
         }
@@ -130,33 +122,13 @@ void gamelogic::setPositions(std::vector<QPair<std::vector<float>,int> > markers
     defaultSoundTimer.start(3000);
 }
 
-void gamelogic::enterSearchMarker1()
+void gamelogic::enterSearchNextMarker()
 {
-    scoreTimer.start();
+    currentMarker = activeMarkers.takeFirst();
+    sound->updateSourcePosition(currentMarker->getMarkerPos());
     defaultSoundTimer.start(0);
-    currentMarker = markerList[0];
-    qDebug("marker1!!");
-}
-
-void gamelogic::enterSearchMarker2()
-{
-    defaultSoundTimer.start(0);
-    currentMarker = markerList[1];
-    qDebug("marker2!!");
-}
-
-void gamelogic::enterSearchMarker3()
-{
-    defaultSoundTimer.start(0);
-    currentMarker = markerList[2];
-    qDebug("marker3!!");
-}
-
-void gamelogic::enterSearchMarker4()
-{
-    defaultSoundTimer.start(0);
-    currentMarker = markerList[3];
-    qDebug("marker4!!");
+    float *pos=currentMarker->getMarkerPos();
+    qDebug() << "search for marker" << currentMarker->getMarkerID() << "@" << pos[0] <<","<< pos[1] <<","<< pos[2];
 }
 
 void gamelogic::finishedGame()
@@ -168,7 +140,7 @@ void gamelogic::finishedGame()
     emit(finishedGameIn(elapsedTime));
 }
 
-void gamelogic::startedGame()
+void gamelogic::handleNewGame()
 {
     qDebug("New Game starts!!");
     defaultSoundTimer.stop();
@@ -176,7 +148,7 @@ void gamelogic::startedGame()
 
 void gamelogic::defaultSound()
 {
-    qDebug("Play default sound");
+//    qDebug("Play default sound");
     sound->soundUpdate(DEFAULT_FREQ);
     defaultSoundTimer.start(DEFAULT_RATE);
 }
@@ -210,5 +182,25 @@ float gamelogic::calculateRate(float distance) {
     //qDebug("rate ist %f", rate);
 
     return rate;
+}
+
+void gamelogic::foundMarker()
+{
+    if(activeMarkers.isEmpty()){
+        emit foundAll();
+    } else {
+        emit searchNext();
+    }
+}
+
+void gamelogic::handleStartGame()
+{
+    activeMarkers.clear();
+    QList<marker*> markers = allMarkers;
+    while(!markers.isEmpty()){
+        int idx = qrand()%markers.size();
+        activeMarkers.append(markers.takeAt(idx));
+    }
+    scoreTimer.start();
 }
 

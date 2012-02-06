@@ -10,10 +10,6 @@ class scenedescription : public QObject
 public:
     explicit scenedescription(QObject *parent = 0);
 
-    ALfloat listenerPos[3];
-    ALfloat listenerVel[3];
-    ALfloat	listenerOri[6];
-
     float marker0Pos[3];
     float marker1Pos[3];
     float marker2Pos[3];
@@ -22,9 +18,6 @@ public:
     float player0Pos[3];
     float player0Dis;
     float player0Ang;
-
-    ALfloat source0Pos[3];
-    ALfloat source0Vel[3];
 
     float speaker0Pos[3];
     float speaker1Pos[3];

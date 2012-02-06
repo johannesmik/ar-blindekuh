@@ -52,7 +52,8 @@ SOURCES += main.cpp\
     soundoutput.cpp \
     scenedescription.cpp \
     gamelogic.cpp \
-    highscore.cpp
+    highscore.cpp \
+    marker.cpp
 
 HEADERS  += mainwindow.h \
         glwidget.h \
@@ -63,6 +64,7 @@ HEADERS  += mainwindow.h \
     soundoutput.h \
     scenedescription.h \
     gamelogic.h \
-    highscore.h
+    highscore.h \
+    marker.h
 
 FORMS    += mainwindow.ui

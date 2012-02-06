@@ -7,16 +7,16 @@
 #include <math.h>
 #include <AL/alut.h>
 #include <iostream>
-#include "scenedescription.h"
 
 class soundoutput : public QObject
 {
     Q_OBJECT
 public:
-    soundoutput(scenedescription *s, QObject *parent = 0);
+    soundoutput(QObject *parent = 0);
     void soundUpdate(float frequency);
 public slots:
     void playPause(int msecs);
+    void updateSourcePosition(ALfloat pos[]);
     void stop();
     void play();
 
@@ -27,8 +27,6 @@ private:
 
     ALuint	buffer;
     ALuint	source;
-    scenedescription *scene;
-
 };
 
 #endif // SOUNDOUTPUT_H
