@@ -15,9 +15,11 @@ class soundoutput : public QObject
 public:
     soundoutput(QObject *parent = 0);
     void soundUpdate(float frequency);
+
 public slots:
     void playPause(int msecs);
     void updateSourcePosition(ALfloat pos[]);
+    void playMarkerFoundSound();
     void playSuccessSound();
     void stop();
     void play();
