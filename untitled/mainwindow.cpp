@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     tracker = new MyMarkerTracker(this);
     connect(ui->verticalSlider, SIGNAL(valueChanged(int)), tracker, SLOT(setThreshold(int)));
-    ui->verticalSlider->setValue(127);
+    ui->verticalSlider->setValue(0);
 
     scene = new scenedescription(this);
     glWidget = new GLWidget(scene, this);

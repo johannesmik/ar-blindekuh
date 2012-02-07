@@ -50,7 +50,7 @@ QVariant highscore::data(const QModelIndex &index, int role) const
     } else if(index.column() == 1) {
         double secs = item.second;
         secs /= 1000;
-        return QString("%1 Sekunden").arg(QString::number(secs, 'f', 2));
+        return QString("%1").arg(QString::number(secs, 'f', 2));
     } else {
         return QVariant();
     }

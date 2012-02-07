@@ -21,6 +21,7 @@ MyMarkerTracker::MyMarkerTracker(QObject *parent):
     cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
     cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
     memStorage = cvCreateMemStorage();;
+    thresholdValue = 0;
 }
 
 MyMarkerTracker::~MyMarkerTracker()
@@ -43,11 +44,11 @@ void MyMarkerTracker::queryForMarker()
 
     cv::cvtColor(frame, bw, CV_BGR2GRAY);
     IplImage bw_ipl(bw);
-    if(thresholdValue == 0)
+    if(thresholdValue == 0){
         cv::threshold(bw, adaptivethreshold, 190.0, 255.0, cv::THRESH_BINARY|cv::THRESH_OTSU);
-    else
+    } else {
         cv::threshold(bw, adaptivethreshold, thresholdValue, 255.0, cv::THRESH_BINARY);
-
+    }
     cv::cvtColor(adaptivethreshold, colorThreshold, CV_GRAY2RGB);
     emit(frameUpdateBw(colorThreshold));
 

@@ -196,6 +196,7 @@ void gamelogic::foundMarker()
     if(activeMarkers.isEmpty()){
         emit foundAll();
     } else {
+        sound->playMarkerFoundSound();
         emit searchNext();
     }
 }
@@ -204,7 +205,7 @@ void gamelogic::handleStartGame()
 {
     activeMarkers.clear();
     QList<marker*> markers = allMarkers;
-    for(int i = 0; i<2; i++){ // take two markers
+    for(int i = 0; i<1; i++){ // take one markers
     //while(!markers.isEmpty()){ //take all markers
         int idx = qrand()%markers.size();
         activeMarkers.append(markers.takeAt(idx));
