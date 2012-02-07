@@ -38,13 +38,20 @@ int highscore::columnCount(const QModelIndex &parent) const
 
 QVariant highscore::data(const QModelIndex &index, int role) const
 {
-    Q_UNUSED(role)
     if(!index.isValid())
         return QVariant();
-    if(role != Qt::DisplayRole)
+    QPair<QString, qint64> item = scores[index.row()];
+    if(role == Qt::UserRole){
+        if(index.column() == 0){
+            return item.first;
+        } else if(index.column() == 1) {
+            return item.second;
+        } else {
+            return QVariant();
+        }
+    } else if(role != Qt::DisplayRole)
         return QVariant();
 
-    QPair<QString, qint64> item = scores[index.row()];
     if(index.column() == 0){
         return item.first;
     } else if(index.column() == 1) {

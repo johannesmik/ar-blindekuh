@@ -53,7 +53,8 @@ SOURCES += main.cpp\
     scenedescription.cpp \
     gamelogic.cpp \
     highscore.cpp \
-    marker.cpp
+    marker.cpp \
+    myapplication.cpp
 
 HEADERS  += mainwindow.h \
         glwidget.h \
@@ -65,6 +66,7 @@ HEADERS  += mainwindow.h \
     scenedescription.h \
     gamelogic.h \
     highscore.h \
-    marker.h
+    marker.h \
+    myapplication.h
 
 FORMS    += mainwindow.ui
