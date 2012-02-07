@@ -57,6 +57,7 @@ void soundoutput::soundUpdate(float frequency)
 {
     stop();
     buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, frequency, 0.0, 0.20);
+    //qDebug() << "buffer" << (buffer) << alutGetErrorString (alutGetError ());
     alSourcei(source, AL_BUFFER, buffer);
     play();
 }
@@ -74,14 +75,33 @@ void soundoutput::updateSourcePosition(ALfloat pos[])
     alSourcefv(source, AL_POSITION, pos);
 }
 
+
+void soundoutput::playMarkerFoundSound()
+{
+    stop();
+
+    buffer = alutCreateBufferFromFile("../success.wav");
+    qDebug() << "buffer" << (buffer) << alutGetErrorString (alutGetError ());
+
+   // buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, 523.251, 0.0, 0.20);
+    alSourcei(source, AL_BUFFER, buffer);
+    play();
+    alutSleep(0.5);
+
+}
+
 void soundoutput::playSuccessSound()
 {
     stop();
-//    buffer = alutCreateBufferFromFile("..\..\win.wav");
-//    qDebug() << "buffer" << (buffer) << alutGetErrorString (alutGetError ());
-    buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, 523.251, 0.0, 0.20);
+
+    buffer = alutCreateBufferFromFile("../tada1.wav");
+    qDebug() << "buffer" << (buffer) << alutGetErrorString (alutGetError ());
+
+   // buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, 523.251, 0.0, 0.20);
     alSourcei(source, AL_BUFFER, buffer);
     play();
+    alutSleep(0.5);
+/*
     alutSleep(0.2);
     stop();
     buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, 659.255, 0.0, 0.20);
@@ -96,7 +116,7 @@ void soundoutput::playSuccessSound()
     stop();
     buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, 1046.50, 0.0, 0.60);
     alSourcei(source, AL_BUFFER, buffer);
-    play();
+    play(); */
 }
 
 void soundoutput::stop()
