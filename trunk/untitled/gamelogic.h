@@ -35,7 +35,8 @@ public slots:
     void handleNewGame();
     void defaultSound();
 private:
-    float calculateFrequency(float angle);
+    float calculateFrequencyByAngle(float angle);
+    float calculateFrequencyByOffset(float offset);
     float calculateRate(float distance);
     soundoutput *sound;
 
