@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     score = new highscore(this);
     QSortFilterProxyModel *filter = new QSortFilterProxyModel(this);
+    filter->setSortRole(Qt::UserRole);
     filter->setSourceModel(score);
     ui->tableView->setModel(filter);
 
