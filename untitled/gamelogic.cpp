@@ -11,9 +11,12 @@
 #define MAX_ANGLE 90
 #define MIN_ANGLE 25
 
+#define MAX_OFFSET 0.8
+#define MIN_OFFSET 0.1
 
-#define MAX_RATE 1000
-#define MIN_RATE 40
+
+#define MAX_RATE 500
+#define MIN_RATE 20
 #define MAX_DISTANCE 0.70f
 #define MIN_DISTANCE 0.15f
 
@@ -104,8 +107,10 @@ void gamelogic::handlePositionUpdate(std::vector<QPair<std::vector<float>,int> >
     float angle = acosf(crossproduct);
     float angleDegree =180/(PI)*angle;
 
+    float offset = sqrt(pos[3] * pos[3] + pos[7] * pos[7]);
 
-//    std::cout << pos[3] << " - " << pos[7] << " - " << pos[11] << std::endl;
+    std::cout << pos[3] << " - " << pos[7] << " - " << pos[11] << std::endl;
+    std::cout << offset << std::endl;
     std::cout << " -->>>  distance: " << distance << std::endl;
 //    std::cout << " -->>>  crossproduct: " << crossproduct << std::endl;
 //    std::cout << " -->>>  arccos: " << angle <<std::endl;
@@ -117,7 +122,8 @@ void gamelogic::handlePositionUpdate(std::vector<QPair<std::vector<float>,int> >
         return;
     }
 
-    sound->soundUpdate(calculateFrequency(angleDegree));
+    //sound->soundUpdate(calculateFrequencyByAngle(angleDegree));
+    sound->soundUpdate(calculateFrequencyByOffset(offset));
     nearRangeTimer.start(calculateRate(distance));
     defaultSoundTimer.start(3000);
 }
@@ -154,7 +160,7 @@ void gamelogic::defaultSound()
     defaultSoundTimer.start(DEFAULT_RATE);
 }
 
-float gamelogic::calculateFrequency(float angle) {
+float gamelogic::calculateFrequencyByAngle(float angle) {
 
     if(angle >= MAX_ANGLE) {
         angle = MAX_ANGLE;
@@ -198,10 +204,25 @@ void gamelogic::handleStartGame()
 {
     activeMarkers.clear();
     QList<marker*> markers = allMarkers;
-    while(!markers.isEmpty()){
+    for(int i = 0; i<2; i++){ // take two markers
+    //while(!markers.isEmpty()){ //take all markers
         int idx = qrand()%markers.size();
         activeMarkers.append(markers.takeAt(idx));
     }
     scoreTimer.start();
+}
+
+float gamelogic::calculateFrequencyByOffset(float offset)
+{
+
+    float halbton = floor((MAX_OFFSET - offset) / MAX_OFFSET * 20);
+
+    // C = 261.63 Hz, Cis 277.18, D 293.88, Es 311.13,
+    // E 329.63, F 349.23, Fis 370, G 392
+    // As 415.3, A 440, B 466.16, H 493.88
+    float frequency = MIN_FREQ * pow(2.0f, (halbton/6));
+    //qDebug("frequenz ist %f", frequency);
+
+    return frequency;
 }
 
