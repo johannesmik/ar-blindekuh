@@ -31,6 +31,8 @@ private:
 
     ALuint	buffer;
     ALuint	source;
+    ALuint	buffer_notification;
+    ALuint	source_notification;
 };
 
 #endif // SOUNDOUTPUT_H

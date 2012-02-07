@@ -21,6 +21,7 @@ soundoutput::soundoutput(QObject *parent):
 
     // Generate buffers, or no sound will be produced
     alGenBuffers(1, &buffer);
+    alGenBuffers(1, &buffer_notification);
 
     if(alGetError() != AL_NO_ERROR)
     {
@@ -32,6 +33,7 @@ soundoutput::soundoutput(QObject *parent):
 
     alGetError();
     alGenSources(1, &source);
+    alGenSources(2, &source_notification);
 
     if(alGetError() != AL_NO_ERROR) {
         qDebug("- Error creating sources !!");
@@ -49,6 +51,15 @@ soundoutput::soundoutput(QObject *parent):
     alSourcefv(source,AL_VELOCITY, sourceVel);
     alSourcei(source,AL_BUFFER, buffer);
     alSourcei(source,AL_LOOPING, AL_FALSE);
+
+
+    //Setup notification source parameters
+    alSourcef(source_notification,AL_PITCH,1.0f);
+    alSourcef(source_notification,AL_GAIN,1.0f);
+    alSourcefv(source_notification,AL_POSITION, sourcePos);
+    alSourcefv(source_notification,AL_VELOCITY, sourceVel);
+    alSourcei(source_notification,AL_BUFFER, buffer_notification);
+    alSourcei(source_notification,AL_LOOPING, AL_FALSE);
 
 
 }
@@ -78,30 +89,28 @@ void soundoutput::updateSourcePosition(ALfloat pos[])
 
 void soundoutput::playMarkerFoundSound()
 {
-    stop();
-
-    buffer = alutCreateBufferFromFile("../success.wav");
-    qDebug() << "buffer" << (buffer) << alutGetErrorString (alutGetError ());
+    buffer_notification = alutCreateBufferFromFile("../success.wav");
+    qDebug() << "buffer" << (buffer_notification) << alutGetErrorString (alutGetError ());
 
    // buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, 523.251, 0.0, 0.20);
-    alSourcei(source, AL_BUFFER, buffer);
-    play();
-    alutSleep(0.5);
+    alSourcei(source_notification, AL_BUFFER, buffer_notification);
+    alSourcePlay(source_notification);
 
 }
 
 void soundoutput::playSuccessSound()
 {
-    stop();
+    buffer_notification = alutCreateBufferFromFile("../success.wav");
+    qDebug() << "buffer" << (buffer_notification) << alutGetErrorString (alutGetError ());
 
-    buffer = alutCreateBufferFromFile("../tada1.wav");
-    qDebug() << "buffer" << (buffer) << alutGetErrorString (alutGetError ());
+    alSourcei(source_notification, AL_BUFFER, buffer_notification);
+    alSourcePlay(source_notification);
 
-   // buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, 523.251, 0.0, 0.20);
+/*
+
+    buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, 523.251, 0.0, 0.20);
     alSourcei(source, AL_BUFFER, buffer);
     play();
-    alutSleep(0.5);
-/*
     alutSleep(0.2);
     stop();
     buffer = alutCreateBufferWaveform(ALUT_WAVEFORM_SINE, 659.255, 0.0, 0.20);
