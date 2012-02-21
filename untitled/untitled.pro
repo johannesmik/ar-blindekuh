@@ -31,7 +31,7 @@ win32 {
     LIBS += -L"D:\blindekuh\freealut-1.1.0-bin\freealut-1.1.0-bin\lib"
     LIBS += -lOpenAL32 -lalut
 } else {
-    LIBS += -lglut -lopencv_core -lopencv_highgui -lGLU -lalut
+    LIBS += -lglut -lopencv_core -lopencv_highgui -lopencv_imgproc -lopenal -lGLU -lalut
 }
 
 
